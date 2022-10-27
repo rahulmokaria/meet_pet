@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 
 import '../utils/colors.dart';
+import 'login_page.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
@@ -16,7 +17,7 @@ class _LandingPageState extends State<LandingPage> {
 
   void _onIntroEnd(context) {
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => LoginPage()),
+      MaterialPageRoute(builder: (_) => const LoginPage()),
     );
   }
 
@@ -146,9 +147,9 @@ class _LandingPageState extends State<LandingPage> {
           borderRadius: BorderRadius.all(Radius.circular(25.0)),
         ),
       ),
-      dotsContainerDecorator: ShapeDecoration(
-        color: Colors.white,
-        shape: const RoundedRectangleBorder(
+      dotsContainerDecorator: const ShapeDecoration(
+        color: white,
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),
       ),

@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 
-Color primary = Color(0xff5e6472);
+Color primary = const Color(0xff5e6472);
+const Color secondary = Color(0xffffffff);
+const Color secondaryLight = Color(0xfff0f0f0);
 
-Color pink = Color(0xffffa69e);
-Color yellow = Color(0xfffaf3dd);
-Color blue = Color(0xffa2efea);
+Color pink = const Color(0xffffa69e);
+Color yellow = const Color(0xfffaf3dd);
+Color blue = const Color(0xffa2efea);
+const Color black = Color(0xFF000000);
+const Color white = Color(0xFFFFFFFF);
 
-
-Map<int, Color> color =
-{
-50:Color.fromRGBO(136,14,79, .1),
-100:Color.fromRGBO(136,14,79, .2),
-200:Color.fromRGBO(136,14,79, .3),
-300:Color.fromRGBO(136,14,79, .4),
-400:Color.fromRGBO(136,14,79, .5),
-500:Color.fromRGBO(136,14,79, .6),
-600:Color.fromRGBO(136,14,79, .7),
-700:Color.fromRGBO(136,14,79, .8),
-800:Color.fromRGBO(136,14,79, .9),
-900:Color.fromRGBO(136,14,79, 1),
+Map<int, Color> color = {
+  50: const Color.fromRGBO(136, 14, 79, .1),
+  100: const Color.fromRGBO(136, 14, 79, .2),
+  200: const Color.fromRGBO(136, 14, 79, .3),
+  300: const Color.fromRGBO(136, 14, 79, .4),
+  400: const Color.fromRGBO(136, 14, 79, .5),
+  500: const Color.fromRGBO(136, 14, 79, .6),
+  600: const Color.fromRGBO(136, 14, 79, .7),
+  700: const Color.fromRGBO(136, 14, 79, .8),
+  800: const Color.fromRGBO(136, 14, 79, .9),
+  900: const Color.fromRGBO(136, 14, 79, 1),
 };
