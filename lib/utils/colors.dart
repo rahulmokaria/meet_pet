@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
-const Color primary = Color.fromRGBO(123, 100, 227, 1);
-const Color secondary = Color(0xffffffff);
-const Color secondaryLight = Color(0xfff0f0f0);
+Color primary = const Color(0xff2e71e5);
+Color secondaryDark = const Color(0xffc0d7e8);
+Color secondaryLight = const Color(0xfffbfcfe);
+const Color secondary = Color(0xffe3f1fa);
+// const Color secondaryLight = Color(0xfff0f0f0);
 
 Color pink = const Color(0xffffa69e);
 Color yellow = const Color(0xfffaf3dd);

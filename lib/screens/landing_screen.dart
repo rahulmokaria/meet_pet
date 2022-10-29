@@ -68,7 +68,7 @@ class _LandingPageState extends State<LandingPage> {
             ],
           ),
           decoration: pageDecoration.copyWith(
-            pageColor: pink,
+            pageColor: secondary,
             bodyFlex: 2,
             imageFlex: 4,
             bodyAlignment: Alignment.bottomCenter,
@@ -91,7 +91,7 @@ class _LandingPageState extends State<LandingPage> {
             ],
           ),
           decoration: pageDecoration.copyWith(
-            pageColor: yellow,
+            pageColor: secondary,
             bodyFlex: 2,
             imageFlex: 4,
             bodyAlignment: Alignment.bottomCenter,
@@ -112,7 +112,7 @@ class _LandingPageState extends State<LandingPage> {
             ],
           ),
           decoration: pageDecoration.copyWith(
-            pageColor: blue,
+            pageColor: secondary,
             bodyFlex: 2,
             imageFlex: 4,
             bodyAlignment: Alignment.bottomCenter,

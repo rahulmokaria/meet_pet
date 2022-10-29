@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meet_pet/screens/home_page.dart';
 
 import '../utils/colors.dart';
 import '../widgets/text_field_ui.dart';
@@ -40,11 +41,18 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
-  signUpUser() {}
+  signUpUser() {
+    gotoHome();
+  }
 
   void openLoginPage() {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => const LoginPage()));
+  }
+
+  void gotoHome() {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => const HomePage()));
   }
 
   Container navigationButtons(String but1, String but2) {
@@ -56,7 +64,7 @@ class _SignUpPageState extends State<SignUpPage> {
         children: [
           Container(
             width: MediaQuery.of(context).size.width * 0.38,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(10),
                 bottomLeft: Radius.circular(10),
@@ -86,7 +94,7 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
           Container(
             width: MediaQuery.of(context).size.width * 0.38,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                 topRight: Radius.circular(10),
                 bottomRight: Radius.circular(10),
@@ -96,7 +104,7 @@ class _SignUpPageState extends State<SignUpPage> {
             height: 55,
             child: InkWell(
               onTap: () {
-                (but1 == 'Register')
+                (but2 == 'Register')
                     ? signUpUser()
                     : page.animateToPage(++pageIndex,
                         duration: const Duration(milliseconds: 400),
@@ -131,7 +139,7 @@ class _SignUpPageState extends State<SignUpPage> {
               right: MediaQuery.of(context).size.width * 0.1,
               left: MediaQuery.of(context).size.width * 0.1,
             ),
-            color: pink,
+            color: secondary,
             child: Column(
               children: [
                 Flexible(
@@ -141,7 +149,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 Container(
                   padding: const EdgeInsets.only(left: 10),
                   alignment: Alignment.centerLeft,
-                  child: const Text(
+                  child: Text(
                     "Register",
                     textScaleFactor: 3,
                     style: TextStyle(
@@ -180,7 +188,7 @@ class _SignUpPageState extends State<SignUpPage> {
               right: 35,
               left: 35,
             ),
-            color: yellow,
+            color: secondary,
             child: Column(
               children: [
                 Flexible(
@@ -190,7 +198,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 Container(
                   padding: const EdgeInsets.only(left: 10),
                   alignment: Alignment.centerLeft,
-                  child: const Text(
+                  child: Text(
                     "Register",
                     textScaleFactor: 3,
                     style: TextStyle(
@@ -221,14 +229,14 @@ class _SignUpPageState extends State<SignUpPage> {
                     onTap: () => _selectDate(context),
                     child: Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.calendar_month_outlined,
                           color: primary,
                         ),
                         const SizedBox(
                           width: 7,
                         ),
-                        const Text(
+                        Text(
                           "Date Of Birth :",
                           style: TextStyle(
                             color: primary,
@@ -240,7 +248,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                         Text(
                           "${birthDate.day} ${textMonth(birthDate.month)} ${birthDate.year}",
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: primary,
                           ),
                         )
@@ -264,7 +272,7 @@ class _SignUpPageState extends State<SignUpPage> {
               right: 35,
               left: 35,
             ),
-            color: blue,
+            color: secondary,
             child: Column(
               children: [
                 Flexible(
@@ -274,7 +282,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 Container(
                   padding: const EdgeInsets.only(left: 10),
                   alignment: Alignment.centerLeft,
-                  child: const Text(
+                  child: Text(
                     "Register",
                     textScaleFactor: 3,
                     style: TextStyle(
