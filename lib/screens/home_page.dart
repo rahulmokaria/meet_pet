@@ -7,9 +7,11 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_zoom_drawer/config.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:meet_pet/screens/pet_description_page.dart';
 import 'package:meet_pet/utils/colors.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../models/pet.dart';
 import '../utils/colors.dart';
 import '../widgets/menu_screen.dart';
 
@@ -111,10 +113,14 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget petCard(int index, String img, String name, String type, String breed,
-      double age, String city, String gender) {
+  Widget petCard(Pet pet) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => PetDescription(
+                  cpet: pet,
+                )));
+      },
       child: Container(
         height: 150,
         padding: const EdgeInsets.only(),
@@ -153,40 +159,37 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Text(
-                              name,
+                              pet.name,
                               textScaleFactor: 1.5,
                               style: TextStyle(
-                                color: Colors.black.withOpacity(.60),
+                                color: black,
                               ),
                             ),
                             Icon(
-                              gender == "M" ? Icons.male : Icons.female,
+                              pet.gender == "M" ? Icons.male : Icons.female,
                               color: Colors.black.withOpacity(.40),
                             ),
                           ],
                         ),
                         Text(
-                          breed + " - " + type,
-                          style:
-                              TextStyle(color: Colors.black.withOpacity(.60)),
+                          pet.breed + " - " + pet.type,
+                          style: TextStyle(color: black),
                         ),
                         Text(
-                          age.toString() + " years old",
+                          pet.age.toString() + " years old",
                           textScaleFactor: 0.8,
-                          style:
-                              TextStyle(color: Colors.black.withOpacity(.60)),
+                          style: TextStyle(color: black),
                         ),
                         Row(
                           children: [
                             Icon(
                               Icons.location_on,
-                              color: Colors.black.withOpacity(.60),
+                              color: black,
                               size: 20,
                             ),
                             Text(
-                              city,
-                              style: TextStyle(
-                                  color: Colors.black.withOpacity(.60)),
+                              pet.city,
+                              style: TextStyle(color: black),
                             ),
                           ],
                         ),
@@ -202,7 +205,7 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(15),
                 child: Image.asset(
-                  img,
+                  pet.imgs[0],
                   width: 150,
                   height: 150,
                   fit: BoxFit.cover,
@@ -277,16 +280,9 @@ class _BodyState extends State<Body> with SingleTickerProviderStateMixin {
               // const SizedBox(
               //   height: 20,
               // ),
-              petCard(0, "assets/images/dumbdog.jpg", "Duggu", "dog",
-                  "Labrador", 2.0, "Porbandar", "M"),
-              petCard(0, "assets/images/catbee.jpg", "Pussy Cat", "cat",
-                  "Ginger", 1.5, "Allahabad", "F"),
-              petCard(0, "assets/images/cutebirt.jpg", "Mithoo", "bird",
-                  "Parrot", 1.5, "Mumbai", "F"),
-              petCard(0, "assets/images/dumbdog.jpg", "Lucy", "dog", "Pug", 5,
-                  "Allahabad", "F"),
-              petCard(0, "assets/images/catbee.jpg", "Pussy Cat", "cat",
-                  " Ginger", 1.5, "Allahabad", "F"),
+              for (var pet in petList) ...[
+                petCard(pet),
+              ]
             ],
           ),
         ),

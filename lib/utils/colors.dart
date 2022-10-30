@@ -9,7 +9,7 @@ const Color secondary = Color(0xffe3f1fa);
 Color pink = const Color(0xffffa69e);
 Color yellow = const Color(0xfffaf3dd);
 Color blue = const Color(0xffa2efea);
-const Color black = Color(0xFF000000);
+Color black = Color(0xFF000000).withOpacity(0.5);
 const Color white = Color(0xFFFFFFFF);
 
 Map<int, Color> color = {
