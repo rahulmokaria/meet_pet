@@ -1,42 +1,75 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 
+import 'package:meet_pet/models/user.dart';
+import 'package:meet_pet/screens/add_pet.dart';
+import 'package:meet_pet/screens/adopt_pet_screen.dart';
+import 'package:meet_pet/screens/all_chats.dart';
+import 'package:meet_pet/screens/user_profile.dart';
+
+import '../screens/home_page.dart';
 import '../utils/colors.dart';
 
 class MenuScreen extends StatefulWidget {
-  const MenuScreen({super.key});
+  final ValueSetter setIndex;
+  const MenuScreen({
+    Key? key,
+    required this.setIndex,
+  }) : super(key: key);
 
   @override
   State<MenuScreen> createState() => _MenuScreenState();
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-  int _menuItemSelected = 1;
+  // int _menuItemSelected = 1;
   Widget menuOption(int index, IconData icon, String optionName) {
-    return InkWell(
+    return GestureDetector(
       onTap: () {
-        setState(() {
-          _menuItemSelected = index;
-        });
+        widget.setIndex(index);
+        // zoomDrawerController.toggle();
+        // Navigator.of(context).pushReplacement(
+        //     MaterialPageRoute(builder: (_) => const HomePage()));
+        // if (optionName == "Adoption") {
+        //   Navigator.of(context).pushReplacement(
+        //       MaterialPageRoute(builder: (_) => const AdoptPetScreen()));
+        // } else if (optionName == "Add Pet") {
+        //   Navigator.of(context).pushReplacement(
+        //       MaterialPageRoute(builder: (_) => const AddPet()));
+        // } else if (optionName == "Favorites") {
+        //   Navigator.of(context)
+        //       .pushReplacement(MaterialPageRoute(builder: (_) => Container()));
+        // } else if (optionName == "Chats") {
+        //   Navigator.of(context).pushReplacement(
+        //       MaterialPageRoute(builder: (_) => const AllChats()));
+        // } else if (optionName == "Profile") {
+        //   Navigator.of(context).pushReplacement(
+        //       MaterialPageRoute(builder: (_) => const UserProfile()));
+        // }
       },
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            size: (_menuItemSelected == index) ? 20 : 15,
-            color: white.withOpacity(_menuItemSelected == index ? 1 : 0.7),
-          ),
-          const SizedBox(width: 10),
-          Text(
-            optionName,
-            textScaleFactor: _menuItemSelected == index ? 1.2 : 1,
-            style: TextStyle(
-              color: white.withOpacity(_menuItemSelected == index ? 1 : 0.7),
+      child: Container(
+        padding: EdgeInsets.only(top: 10, bottom: 10),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: (menuItemSelected == index) ? 20 : 15,
+              color: white.withOpacity(menuItemSelected == index ? 1 : 0.7),
             ),
-          ),
-        ],
+            const SizedBox(width: 10),
+            Text(
+              optionName,
+              textScaleFactor: menuItemSelected == index ? 1.2 : 1,
+              style: TextStyle(
+                color: white.withOpacity(menuItemSelected == index ? 1 : 0.7),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -84,21 +117,9 @@ class _MenuScreenState extends State<MenuScreen> {
               child: Container(),
             ),
             menuOption(1, FontAwesomeIcons.paw, "Adoption"),
-            const SizedBox(
-              height: 20,
-            ),
             menuOption(2, Icons.add, "Add Pet"),
-            const SizedBox(
-              height: 20,
-            ),
             menuOption(3, Icons.favorite, "Favorites"),
-            const SizedBox(
-              height: 20,
-            ),
             menuOption(4, Icons.chat, "Chats"),
-            const SizedBox(
-              height: 20,
-            ),
             menuOption(5, Icons.person, "Profile"),
             Flexible(
               flex: 1,
