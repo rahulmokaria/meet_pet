@@ -163,7 +163,7 @@ class _PetDescriptionState extends State<PetDescription> {
                                   ),
                                   Expanded(
                                     child: Text(
-                                      widget.cpet.city,
+                                      widget.cpet.address.city,
                                       style: TextStyle(
                                         color: black,
                                       ),

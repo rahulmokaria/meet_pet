@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:meet_pet/models/pet.dart';
+import 'package:meet_pet/screens/add_pet.dart';
 import 'package:meet_pet/widgets/pet_card.dart';
 
 import '../models/user.dart';
@@ -16,6 +17,10 @@ class UserProfile extends StatefulWidget {
 }
 
 class _UserProfileState extends State<UserProfile> {
+  void navigateToAddPet() {
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => AddPet()));
+  }
+
   @override
   Widget build(BuildContext context) {
     double _width = MediaQuery.of(context).size.width * 0.01;
@@ -49,7 +54,7 @@ class _UserProfileState extends State<UserProfile> {
           ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(MediaQuery.of(context).size.width * 0.1),
+              topLeft: Radius.circular(_width * 10),
               topRight:
                   Radius.circular(MediaQuery.of(context).size.width * 0.1),
             ),
@@ -68,10 +73,10 @@ class _UserProfileState extends State<UserProfile> {
                               MediaQuery.of(context).size.width * 0.1),
                           topRight: Radius.circular(
                               MediaQuery.of(context).size.width * 0.1),
-                          bottomLeft: Radius.circular(
-                              MediaQuery.of(context).size.width * 0.1),
-                          bottomRight: Radius.circular(
-                              MediaQuery.of(context).size.width * 0.1),
+                          // bottomLeft: Radius.circular(
+                          // MediaQuery.of(context).size.width * 0.1),
+                          // bottomRight: Radius.circular(
+                          // MediaQuery.of(context).size.width * 0.1),
                         ),
                         child: Image.asset(
                           cUser.backCoverImg,
@@ -262,7 +267,7 @@ class _UserProfileState extends State<UserProfile> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(_width * 7.5)),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () => navigateToAddPet(),
                   style: ButtonStyle(
                     backgroundColor:
                         MaterialStateProperty.resolveWith((states) {

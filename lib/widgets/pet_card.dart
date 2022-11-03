@@ -80,7 +80,7 @@ Widget landscapePetCard(Pet pet, BuildContext context) {
                             size: 20,
                           ),
                           Text(
-                            pet.city,
+                            pet.address.city,
                             style: TextStyle(color: black),
                           ),
                         ],
@@ -198,7 +198,7 @@ Widget portraitPetCard(Pet pet, BuildContext context) {
                         size: MediaQuery.of(context).size.width * 0.04,
                       ),
                       Text(
-                        pet.city,
+                        pet.address.city,
                         style: TextStyle(color: black),
                       ),
                     ],

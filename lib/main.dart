@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:meet_pet/screens/landing_screen.dart';
+import 'package:flutter/services.dart';
 
-import 'screens/home_page.dart';
+import 'screens/landing_screen.dart';
 import 'utils/colors.dart';
 
 void main() {
@@ -14,8 +14,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Meet Pet',
       theme: ThemeData(
         primarySwatch: MaterialColor(0xff2e71e5, color),
       ),
