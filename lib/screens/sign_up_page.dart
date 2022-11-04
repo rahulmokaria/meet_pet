@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meet_pet/screens/home_page.dart';
 
+import '../resources/auth_methods.dart';
 import '../utils/colors.dart';
 import '../widgets/text_field_ui.dart';
 import 'login_page.dart';
@@ -19,6 +20,7 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   PageController page = PageController(initialPage: 0);
   int pageIndex = 0;
+  bool _isLoading = false;
 
   final TextEditingController _passwordTextController = TextEditingController();
   final TextEditingController _emailTextController = TextEditingController();
@@ -69,7 +71,36 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
-  signUpUser() {
+  signUpUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+    String res = await AuthMethods().signUpUser(
+        email: _emailTextController.text,
+        password: _passwordTextController.text,
+        userName: _userNameTextController.text,
+        firstName: _firstNameTextController.text,
+        lastName: _lastNameTextController.text,
+        contactNumber: _contactNumberTextController.text,
+        dob: birthDate,
+        addLine1: _addLine1TextController.text,
+        addLine2: _addLine2TextController.text,
+        city: _cityTextController.text,
+        state: _stateTextController.text,
+        country: _countryTextController.text,
+        zipCode: int.parse(_zipCodeTextController.text),
+        profilePicFile: _profilePicImage!,
+        backCoverPicFile: _backCoverPicImage!);
+    setState(() {
+      _isLoading = false;
+    });
+    print(res);
+
+    if (res == 'success') {
+      gotoHome();
+    } else {
+      // showSnackBar(res, context);
+    }
     gotoHome();
   }
 
@@ -130,24 +161,30 @@ class _SignUpPageState extends State<SignUpPage> {
               color: primary,
             ),
             height: 55,
-            child: InkWell(
-              onTap: () {
-                (but2 == 'Register')
-                    ? signUpUser()
-                    : page.animateToPage(++pageIndex,
-                        duration: const Duration(milliseconds: 400),
-                        curve: Curves.linearToEaseOut);
-              },
-              child: Center(
-                child: Text(
-                  but2,
-                  style: const TextStyle(
-                    color: white,
-                    fontWeight: FontWeight.bold,
+            child: _isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: white,
+                    ),
+                  )
+                : InkWell(
+                    onTap: () {
+                      (but2 == 'Register')
+                          ? signUpUser()
+                          : page.animateToPage(++pageIndex,
+                              duration: const Duration(milliseconds: 400),
+                              curve: Curves.linearToEaseOut);
+                    },
+                    child: Center(
+                      child: Text(
+                        but2,
+                        style: const TextStyle(
+                          color: white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
           )
         ],
       ),

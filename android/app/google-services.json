@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "566010512135",
+    "project_id": "meet-pet-c2294",
+    "storage_bucket": "meet-pet-c2294.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:566010512135:android:dfb883a741669ea3ba3ba2",
+        "android_client_info": {
+          "package_name": "com.daemondemons.meetpet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "566010512135-q86kjipulrp2lmlu9t0chsukh71l0rm1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.daemondemons.meetpet",
+            "certificate_hash": "21a0595d4888f934c6214c92d6a2d140838e8d12"
+          }
+        },
+        {
+          "client_id": "566010512135-mlju0g4gsodhdu37op2vnklkqnv383il.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAP7n5txxHOcql6XPpyxyEv1CU0ts_A984"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "566010512135-mlju0g4gsodhdu37op2vnklkqnv383il.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

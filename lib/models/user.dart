@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
 class User {
   String uid;
   String userName;
@@ -12,6 +14,7 @@ class User {
   String emailId;
   String contactNo;
   Address address;
+  List<String> favPetList;
   User({
     required this.uid,
     required this.userName,
@@ -23,6 +26,7 @@ class User {
     required this.emailId,
     required this.contactNo,
     required this.address,
+    required this.favPetList,
   });
 
   User copyWith({
@@ -36,6 +40,7 @@ class User {
     String? emailId,
     String? contactNo,
     Address? address,
+    List<String>? favPetList,
   }) {
     return User(
       uid: uid ?? this.uid,
@@ -48,6 +53,7 @@ class User {
       emailId: emailId ?? this.emailId,
       contactNo: contactNo ?? this.contactNo,
       address: address ?? this.address,
+      favPetList: favPetList ?? this.favPetList,
     );
   }
 
@@ -63,6 +69,7 @@ class User {
       'emailId': emailId,
       'contactNo': contactNo,
       'address': address.toMap(),
+      'favPetList': favPetList,
     };
   }
 
@@ -78,6 +85,9 @@ class User {
       emailId: map['emailId'] as String,
       contactNo: map['contactNo'] as String,
       address: Address.fromMap(map['address'] as Map<String, dynamic>),
+      favPetList: List<String>.from(
+        (map['favPetList'] as List<String>),
+      ),
     );
   }
 
@@ -88,7 +98,7 @@ class User {
 
   @override
   String toString() {
-    return 'User(uid: $uid, userName: $userName, firstName: $firstName, lastName: $lastName, profileImg: $profileImg, backCoverImg: $backCoverImg, dob: $dob, emailId: $emailId, contactNo: $contactNo, address: $address)';
+    return 'User(uid: $uid, userName: $userName, firstName: $firstName, lastName: $lastName, profileImg: $profileImg, backCoverImg: $backCoverImg, dob: $dob, emailId: $emailId, contactNo: $contactNo, address: $address, favPetList: $favPetList)';
   }
 
   @override
@@ -104,7 +114,8 @@ class User {
         other.dob == dob &&
         other.emailId == emailId &&
         other.contactNo == contactNo &&
-        other.address == address;
+        other.address == address &&
+        listEquals(other.favPetList, favPetList);
   }
 
   @override
@@ -118,7 +129,8 @@ class User {
         dob.hashCode ^
         emailId.hashCode ^
         contactNo.hashCode ^
-        address.hashCode;
+        address.hashCode ^
+        favPetList.hashCode;
   }
 }
 
@@ -212,20 +224,22 @@ class Address {
 }
 
 User cUser = User(
-    address: Address(
-      addLine1: "P-131 Near Shivam Appt",
-      addLine2: "RajivNagar",
-      city: "Porbandar",
-      state: "Gujarat",
-      country: "India",
-      zipCode: 360575,
-    ),
-    backCoverImg: 'assets/images/cutebirt.jpg',
-    contactNo: '8707022722',
-    dob: DateTime.now(),
-    emailId: 'rahulmokaria.rm@gmail.com',
-    firstName: 'Rahul',
-    lastName: 'Mokaria',
-    profileImg: 'assets/images/owl.jpg',
-    uid: 'dfsebzdhlgvuighaliSA7tg',
-    userName: 'rahulMokaria');
+  address: Address(
+    addLine1: "P-131 Near Shivam Appt",
+    addLine2: "RajivNagar",
+    city: "Porbandar",
+    state: "Gujarat",
+    country: "India",
+    zipCode: 360575,
+  ),
+  favPetList: [],
+  backCoverImg: 'assets/images/cutebirt.jpg',
+  contactNo: '8707022722',
+  dob: DateTime.now(),
+  emailId: 'rahulmokaria.rm@gmail.com',
+  firstName: 'Rahul',
+  lastName: 'Mokaria',
+  profileImg: 'assets/images/owl.jpg',
+  uid: 'dfsebzdhlgvuighaliSA7tg',
+  userName: 'rahulMokaria',
+);
