@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../resources/auth_methods.dart';
 import '../utils/colors.dart';
 import '../widgets/text_field_ui.dart';
+import 'home_page.dart';
 import 'sign_up_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -14,6 +16,39 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordTextController = TextEditingController();
   final TextEditingController _emailTextController = TextEditingController();
+  bool _isLoading = false;
+
+  @override
+  dispose() {
+    super.dispose();
+    _passwordTextController.dispose();
+    _emailTextController.dispose();
+  }
+
+  void loginUser() async {
+    print("loginng ");
+    setState(() {
+      _isLoading = true;
+    });
+    String res = await AuthMethods().loginUser(
+      email: _emailTextController.text,
+      password: _passwordTextController.text,
+    );
+
+    if (res == 'success') {
+      gotoHome();
+    } else {
+      // showSnackBar(res, context);
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  void gotoHome() {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => const HomePage()));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                     decoration:
                         BoxDecoration(borderRadius: BorderRadius.circular(90)),
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () => loginUser(),
                       style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.resolveWith((states) {
@@ -96,14 +131,20 @@ class _LoginPageState extends State<LoginPage> {
                                 RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30))),
                       ),
-                      child: const Text(
-                        "Login",
-                        style: TextStyle(
-                          color: secondary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
+                      child: _isLoading
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                color: white,
+                              ),
+                            )
+                          : const Text(
+                              "Login",
+                              style: TextStyle(
+                                color: secondary,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
                     ),
                   ),
                   Row(
