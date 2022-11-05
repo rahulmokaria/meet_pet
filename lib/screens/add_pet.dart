@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -7,11 +8,15 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../models/user.dart';
 import '../utils/colors.dart';
-import 'home_page.dart';
 import '../widgets/text_field_ui.dart';
+import 'home_page.dart';
 
 class AddPet extends StatefulWidget {
-  const AddPet({super.key});
+  final User cUser;
+  const AddPet({
+    Key? key,
+    required this.cUser,
+  }) : super(key: key);
 
   @override
   State<AddPet> createState() => _AddPetState();
@@ -30,25 +35,36 @@ class _AddPetState extends State<AddPet> {
     "Male",
     'Female',
   ];
-  final TextEditingController _addLine1TextController =
-      TextEditingController(text: cUser.address.addLine1);
-  final TextEditingController _addLine2TextController =
-      TextEditingController(text: cUser.address.addLine2);
-  final TextEditingController _cityTextController =
-      TextEditingController(text: cUser.address.city);
-  final TextEditingController _stateTextController =
-      TextEditingController(text: cUser.address.state);
-  final TextEditingController _countryTextController =
-      TextEditingController(text: cUser.address.country);
-  final TextEditingController _zipCodeTextController =
-      TextEditingController(text: cUser.address.zipCode.toString());
+  TextEditingController _addLine1TextController = TextEditingController();
+  TextEditingController _addLine2TextController = TextEditingController();
+  TextEditingController _cityTextController = TextEditingController();
+  TextEditingController _stateTextController = TextEditingController();
+  TextEditingController _countryTextController = TextEditingController();
+  TextEditingController _zipCodeTextController = TextEditingController();
   DateTime datePosted = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    _addLine1TextController =
+        TextEditingController(text: widget.cUser.address.addLine1);
+    _addLine2TextController =
+        TextEditingController(text: widget.cUser.address.addLine2);
+    _cityTextController =
+        TextEditingController(text: widget.cUser.address.city);
+    _stateTextController =
+        TextEditingController(text: widget.cUser.address.state);
+    _countryTextController =
+        TextEditingController(text: widget.cUser.address.country);
+    _zipCodeTextController =
+        TextEditingController(text: widget.cUser.address.zipCode.toString());
+  }
 
   @override
   Widget build(BuildContext context) {
     double _width = MediaQuery.of(context).size.width * 0.01;
     double _height = MediaQuery.of(context).size.height * 0.01;
-    print(_width);
+    // print(_width);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: white,

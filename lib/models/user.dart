@@ -1,7 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+
+import 'address.dart';
 
 class User {
   String uid;
@@ -14,7 +18,7 @@ class User {
   String emailId;
   String contactNo;
   Address address;
-  List<String> favPetList;
+  List<dynamic> favPetList;
   User({
     required this.uid,
     required this.userName,
@@ -28,6 +32,30 @@ class User {
     required this.address,
     required this.favPetList,
   });
+
+  static User fromSnap(DocumentSnapshot snap) {
+    var snapshot = snap.data() as Map<String, dynamic>;
+    return User(
+      address: Address(
+        addLine1: snapshot['address'],
+        addLine2: snapshot['address'],
+        city: snapshot['address'],
+        state: snapshot['address'],
+        country: snapshot['address'],
+        zipCode: snapshot['address'],
+      ),
+      backCoverImg: snapshot['backCoverImg'],
+      contactNo: snapshot['contactNo'],
+      dob: snapshot['dob'],
+      emailId: snapshot['emailId'],
+      favPetList: snapshot['favPetList'],
+      firstName: snapshot['firstName'],
+      lastName: snapshot['lastName'],
+      profileImg: snapshot['profileImg'],
+      uid: snapshot['uid'],
+      userName: snapshot['userName'],
+    );
+  }
 
   User copyWith({
     String? uid,
@@ -65,7 +93,7 @@ class User {
       'lastName': lastName,
       'profileImg': profileImg,
       'backCoverImg': backCoverImg,
-      'dob': dob.millisecondsSinceEpoch,
+      'dob': dob..millisecondsSinceEpoch,
       'emailId': emailId,
       'contactNo': contactNo,
       'address': address.toMap(),
@@ -134,112 +162,36 @@ class User {
   }
 }
 
-class Address {
-  String addLine1;
-  String addLine2;
-  String city;
-  String state;
-  String country;
-  int zipCode;
-  Address({
-    required this.addLine1,
-    required this.addLine2,
-    required this.city,
-    required this.state,
-    required this.country,
-    required this.zipCode,
-  });
+// User cUser = User(
+//   address: Address(
+//     addLine1: "P-131 Near Shivam Appt",
+//     addLine2: "RajivNagar",
+//     city: "Porbandar",
+//     state: "Gujarat",
+//     country: "India",
+//     zipCode: 360575,
+//   ),
+//   favPetList: [],
+//   backCoverImg: 'assets/images/cutebirt.jpg',
+//   contactNo: '8707022722',
+//   dob: DateTime.now(),
+//   emailId: 'rahulmokaria.rm@gmail.com',
+//   firstName: 'Rahul',
+//   lastName: 'Mokaria',
+//   profileImg: 'assets/images/owl.jpg',
+//   uid: 'dfsebzdhlgvuighaliSA7tg',
+//   userName: 'rahulMokaria',
+// );
 
-  Address copyWith({
-    String? addLine1,
-    String? addLine2,
-    String? city,
-    String? state,
-    String? country,
-    int? zipCode,
-  }) {
-    return Address(
-      addLine1: addLine1 ?? this.addLine1,
-      addLine2: addLine2 ?? this.addLine2,
-      city: city ?? this.city,
-      state: state ?? this.state,
-      country: country ?? this.country,
-      zipCode: zipCode ?? this.zipCode,
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'addLine1': addLine1,
-      'addLine2': addLine2,
-      'city': city,
-      'state': state,
-      'country': country,
-      'zipCode': zipCode,
-    };
-  }
-
-  factory Address.fromMap(Map<String, dynamic> map) {
-    return Address(
-      addLine1: map['addLine1'] as String,
-      addLine2: map['addLine2'] as String,
-      city: map['city'] as String,
-      state: map['state'] as String,
-      country: map['country'] as String,
-      zipCode: map['zipCode'] as int,
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory Address.fromJson(String source) =>
-      Address.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  @override
-  String toString() {
-    return 'Address(addLine1: $addLine1, addLine2: $addLine2, city: $city, state: $state, country: $country, zipCode: $zipCode)';
-  }
-
-  @override
-  bool operator ==(covariant Address other) {
-    if (identical(this, other)) return true;
-
-    return other.addLine1 == addLine1 &&
-        other.addLine2 == addLine2 &&
-        other.city == city &&
-        other.state == state &&
-        other.country == country &&
-        other.zipCode == zipCode;
-  }
-
-  @override
-  int get hashCode {
-    return addLine1.hashCode ^
-        addLine2.hashCode ^
-        city.hashCode ^
-        state.hashCode ^
-        country.hashCode ^
-        zipCode.hashCode;
-  }
-}
-
-User cUser = User(
-  address: Address(
-    addLine1: "P-131 Near Shivam Appt",
-    addLine2: "RajivNagar",
-    city: "Porbandar",
-    state: "Gujarat",
-    country: "India",
-    zipCode: 360575,
-  ),
-  favPetList: [],
-  backCoverImg: 'assets/images/cutebirt.jpg',
-  contactNo: '8707022722',
-  dob: DateTime.now(),
-  emailId: 'rahulmokaria.rm@gmail.com',
-  firstName: 'Rahul',
-  lastName: 'Mokaria',
-  profileImg: 'assets/images/owl.jpg',
-  uid: 'dfsebzdhlgvuighaliSA7tg',
-  userName: 'rahulMokaria',
-);
+// User cUser = FirebaseAuth.instance.currentUser.to
+// Future<User> getUserDetails() async {
+//   DocumentSnapshot<Map<String, dynamic>> userSnap = await FirebaseFirestore
+//       .instance
+//       .collection("users")
+//       .doc(FirebaseAuth.instance.currentUser!.uid)
+//       .get();
+//   User cUser = User(
+//       // address: Address(addLine1: userSnap['address'][]),
+//       a
+//   return cUser;
+// }

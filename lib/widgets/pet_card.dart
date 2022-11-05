@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
@@ -8,6 +10,7 @@ import '../utils/colors.dart';
 Widget landscapePetCard(Pet pet, BuildContext context) {
   return InkWell(
     onTap: () {
+      print(FirebaseAuth.instance.currentUser);
       Navigator.of(context).push(MaterialPageRoute(
           builder: (_) => PetDescription(
                 cpet: pet,

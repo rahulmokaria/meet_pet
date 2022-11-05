@@ -2,12 +2,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 
+import '../models/address.dart';
 import 'storage_methods.dart';
 import '../models/user.dart' as model;
 
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<model.User> getUserDetails() async {
+    User currentUser = _auth.currentUser!;
+
+    DocumentSnapshot documentSnapshot =
+        await _firestore.collection('users').doc(currentUser.uid).get();
+
+    return model.User.fromSnap(documentSnapshot);
+  }
 
   Future<String> signUpUser({
     required String userName,
@@ -60,7 +70,7 @@ class AuthMethods {
           uid: cred.user!.uid,
           profileImg: profilePicUrl,
           backCoverImg: backCoverPicUrl,
-          address: model.Address(
+          address: Address(
             addLine1: addLine1,
             addLine2: addLine2,
             city: city,
@@ -71,12 +81,12 @@ class AuthMethods {
           favPetList: [],
         );
 
-        print(user);
-
+        // print(user);
+        var uploadUser = user.toMap();
         await _firestore
             .collection("users")
             .doc(cred.user!.uid)
-            .set(user.toMap());
+            .set(uploadUser);
         res = "success";
       }
     } catch (e) {
@@ -95,7 +105,7 @@ class AuthMethods {
         UserCredential cred = await _auth.signInWithEmailAndPassword(
             email: email, password: password);
 
-        print(cred.user!.uid);
+        // print(cred.user!.uid);
 
         res = "success";
       }
@@ -103,5 +113,9 @@ class AuthMethods {
       res = err.toString();
     }
     return res;
+  }
+
+  Future<void> signOut() async {
+    await _auth.signOut();
   }
 }

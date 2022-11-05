@@ -1,23 +1,22 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
-import 'package:meet_pet/models/user.dart';
-import 'package:meet_pet/screens/add_pet.dart';
-import 'package:meet_pet/screens/adopt_pet_screen.dart';
-import 'package:meet_pet/screens/all_chats.dart';
-import 'package:meet_pet/screens/user_profile.dart';
-
+import '../models/user.dart' as model;
+import '../screens/login_page.dart';
 import '../screens/home_page.dart';
 import '../utils/colors.dart';
 
 class MenuScreen extends StatefulWidget {
+  final model.User cUser;
   final ValueSetter setIndex;
   const MenuScreen({
     Key? key,
+    required this.cUser,
     required this.setIndex,
   }) : super(key: key);
 
@@ -26,30 +25,17 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
+  signOutUser() {
+    FirebaseAuth.instance.signOut();
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => const LoginPage()));
+  }
+
   // int _menuItemSelected = 1;
   Widget menuOption(int index, IconData icon, String optionName) {
     return GestureDetector(
       onTap: () {
         widget.setIndex(index);
-        // zoomDrawerController.toggle();
-        // Navigator.of(context).pushReplacement(
-        //     MaterialPageRoute(builder: (_) => const HomePage()));
-        // if (optionName == "Adoption") {
-        //   Navigator.of(context).pushReplacement(
-        //       MaterialPageRoute(builder: (_) => const AdoptPetScreen()));
-        // } else if (optionName == "Add Pet") {
-        //   Navigator.of(context).pushReplacement(
-        //       MaterialPageRoute(builder: (_) => const AddPet()));
-        // } else if (optionName == "Favorites") {
-        //   Navigator.of(context)
-        //       .pushReplacement(MaterialPageRoute(builder: (_) => Container()));
-        // } else if (optionName == "Chats") {
-        //   Navigator.of(context).pushReplacement(
-        //       MaterialPageRoute(builder: (_) => const AllChats()));
-        // } else if (optionName == "Profile") {
-        //   Navigator.of(context).pushReplacement(
-        //       MaterialPageRoute(builder: (_) => const UserProfile()));
-        // }
       },
       child: Container(
         padding: EdgeInsets.only(top: 10, bottom: 10),
@@ -91,8 +77,8 @@ class _MenuScreenState extends State<MenuScreen> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(25),
-                  child: Image.asset(
-                    'assets/images/owl.jpg',
+                  child: Image.network(
+                    widget.cUser.profileImg,
                     height: 50,
                     width: 50,
                     fit: BoxFit.cover,
@@ -101,9 +87,9 @@ class _MenuScreenState extends State<MenuScreen> {
                 SizedBox(
                   width: 10,
                 ),
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'Rahul Mokaria',
+                    "${widget.cUser.firstName} ${widget.cUser.lastName}",
                     textScaleFactor: 1.5,
                     style: TextStyle(
                       color: white,
@@ -126,6 +112,7 @@ class _MenuScreenState extends State<MenuScreen> {
               child: Container(),
             ),
             InkWell(
+              onTap: () => signOutUser(),
               child: Row(
                 children: [
                   Text(

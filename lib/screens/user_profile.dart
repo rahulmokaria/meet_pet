@@ -1,31 +1,83 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:meet_pet/models/pet.dart';
 import 'package:meet_pet/screens/add_pet.dart';
 import 'package:meet_pet/widgets/pet_card.dart';
 
-import '../models/user.dart';
+import '../models/address.dart';
+import '../models/user.dart' as model;
 import '../utils/colors.dart';
 import 'home_page.dart';
 
 class UserProfile extends StatefulWidget {
-  const UserProfile({super.key});
+  final model.User cUser;
+  const UserProfile({
+    Key? key,
+    required this.cUser,
+  }) : super(key: key);
 
   @override
   State<UserProfile> createState() => _UserProfileState();
 }
 
 class _UserProfileState extends State<UserProfile> {
+  bool _isLoading = false;
+  var userData = {};
   void navigateToAddPet() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => AddPet()));
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => AddPet(
+          cUser: widget.cUser,
+        ),
+      ),
+    );
   }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   getData();
+  // }
+
+  // getData() async {
+  //   setState(() {
+  //     _isLoading = true;
+  //   });
+  //   try {
+  //     var userSnap = await FirebaseFirestore.instance
+  //         .collection('users')
+  //         .doc(widget.userId)
+  //         .get();
+
+  //     // get post lENGTH
+  //     var petForAdoptionSnap = await FirebaseFirestore.instance
+  //         .collection('pets')
+  //         .where('oldOwnerUID',
+  //             isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+  //         .get();
+
+  //     userData = userSnap.data()!;
+  //   } catch (e) {
+  //     // showSnackBar(
+  //     //   context,
+  //     //   e.toString(),
+  //     // );
+  //   }
+  //   setState(() {
+  //     _isLoading = false;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
     double _width = MediaQuery.of(context).size.width * 0.01;
     double _height = MediaQuery.of(context).size.height * 0.01;
     print(_width);
+    // model.User cUser = model.User.fromMap(userData);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: white,
@@ -78,8 +130,8 @@ class _UserProfileState extends State<UserProfile> {
                           // bottomRight: Radius.circular(
                           // MediaQuery.of(context).size.width * 0.1),
                         ),
-                        child: Image.asset(
-                          cUser.backCoverImg,
+                        child: Image.network(
+                          widget.cUser.backCoverImg,
                           height: MediaQuery.of(context).size.width * 0.5,
                           width: MediaQuery.of(context).size.width,
                           fit: BoxFit.cover,
@@ -113,8 +165,8 @@ class _UserProfileState extends State<UserProfile> {
                         color: secondary,
                         height: MediaQuery.of(context).size.width * 0.4,
                         width: MediaQuery.of(context).size.width * 0.4,
-                        child: Image.asset(
-                          cUser.profileImg,
+                        child: Image.network(
+                          widget.cUser.profileImg,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -160,14 +212,14 @@ class _UserProfileState extends State<UserProfile> {
                 ],
               ),
               Text(
-                cUser.userName,
+                widget.cUser.userName,
                 textScaleFactor: 1.5,
                 style: TextStyle(
                   color: black,
                 ),
               ),
               Text(
-                "${cUser.firstName} ${cUser.lastName}",
+                "${widget.cUser.firstName} ${widget.cUser.lastName}",
                 textScaleFactor: 1.7,
                 style: TextStyle(
                   color: black,
@@ -175,21 +227,21 @@ class _UserProfileState extends State<UserProfile> {
                 ),
               ),
               Text(
-                "${cUser.address.addLine1}, ${cUser.address.addLine2},",
+                "${widget.cUser.address.addLine1}, ${widget.cUser.address.addLine2},",
                 textScaleFactor: 1.2,
                 style: TextStyle(
                   color: black,
                 ),
               ),
               Text(
-                "${cUser.address.city}, ${cUser.address.state}, ${cUser.address.country}",
+                "${widget.cUser.address.city}, ${widget.cUser.address.state}, ${widget.cUser.address.country}",
                 textScaleFactor: 1,
                 style: TextStyle(
                   color: black,
                 ),
               ),
               Text(
-                cUser.emailId,
+                widget.cUser.emailId,
                 textScaleFactor: 1.2,
                 style: TextStyle(
                   color: black,
@@ -199,15 +251,18 @@ class _UserProfileState extends State<UserProfile> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    cUser.contactNo,
+                    widget.cUser.contactNo,
                     textScaleFactor: 1.2,
                     style: TextStyle(
                       color: black,
                     ),
                   ),
-                  Icon(
-                    Icons.edit,
-                    color: black,
+                  InkWell(
+                    onTap: () {},
+                    child: Icon(
+                      Icons.edit,
+                      color: black,
+                    ),
                   ),
                 ],
               ),

@@ -5,12 +5,17 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../models/pet.dart';
+import '../models/user.dart';
 import '../utils/colors.dart';
 import '../widgets/pet_card.dart';
 import 'home_page.dart';
 
 class AdoptPetScreen extends StatefulWidget {
-  const AdoptPetScreen({super.key});
+  final User cUser;
+  const AdoptPetScreen({
+    Key? key,
+    required this.cUser,
+  }) : super(key: key);
 
   @override
   State<AdoptPetScreen> createState() => _AdoptPetScreenState();
