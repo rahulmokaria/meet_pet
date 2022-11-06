@@ -35,15 +35,15 @@ class _HomePageState extends State<HomePage> {
 
   bool _isLoading = false;
   var userData = {};
+  var petListdb = [];
+  List<Pet> petList = [];
   @override
   void initState() {
     super.initState();
-    print(1);
     addData();
   }
 
   addData() async {
-    print(2);
     // UserProvider _userProvider =
     //     Provider.of<UserProvider>(context, listen: false);
     // await _userProvider.refreshUser();
@@ -51,7 +51,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   getData() async {
-    print(3);
     setState(() {
       _isLoading = true;
     });
@@ -69,6 +68,36 @@ class _HomePageState extends State<HomePage> {
           .get();
 
       userData = userSnap.data()!;
+
+      QuerySnapshot<Map<String, dynamic>> petSnap =
+          await FirebaseFirestore.instance.collection('pets').get();
+      petListdb = petSnap.docs;
+
+      for (var pet in petListdb) {
+        var curPet = Pet(
+          age: pet["age"],
+          breed: pet["breed"],
+          desc: pet["desc"],
+          gender: pet["gender"],
+          imgs: pet["imgs"], // problem
+          name: pet["name"],
+          oldOwner: pet["oldOwner"],
+          oldOwnerUID: pet["oldOwnerUID"],
+          petId: pet["petId"],
+          type: pet["type"],
+          datePosted: pet["datePosted"].toDate(), //problem
+          address: Address(
+            addLine1: pet["address"]["addLine1"],
+            addLine2: pet["address"]["addLine2"],
+            city: pet["address"]["city"],
+            state: pet["address"]["state"],
+            country: pet["address"]["country"],
+            zipCode: pet["address"]["zipCode"],
+          ),
+        );
+
+        petList.add(curPet);
+      }
     } catch (e) {
       // showSnackBar(
       //   context,
@@ -78,22 +107,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _isLoading = false;
     });
-    print(userData);
-
-    print("");
-    print("");
-
-    // Map<String, dynamic> king = {
-    //   "stirngc": "wefasdf",
-    //   "map": {
-    //     "address": "kal",
-    //     "adfs": 123434,
-    //   }
-    // };
-
-    // print(king["map"]["adfs"] i);
-
-    print(4);
+    // print(userData);
   }
 
   @override
@@ -117,9 +131,8 @@ class _HomePageState extends State<HomePage> {
       profileImg: userData['profileImg'],
       backCoverImg: userData['backCoverImg'],
       favPetList: userData['favPetList'],
-
     );
-    print(userData['address']['zipCode'] is int);
+
     return _isLoading
         ? const Center(
             child: CircularProgressIndicator(
@@ -128,7 +141,7 @@ class _HomePageState extends State<HomePage> {
           )
         : ZoomDrawer(
             // mainScreen: const Body(),
-            mainScreen: currentScreen(cUser),
+            mainScreen: currentScreen(cUser, petList),
             menuScreen: MenuScreen(
               cUser: cUser,
               setIndex: (index) {
@@ -152,10 +165,11 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-Widget currentScreen(model.User cUser) {
+Widget currentScreen(model.User cUser, List<Pet> petList) {
   if (menuItemSelected == 1) {
     return AdoptPetScreen(
       cUser: cUser,
+      petList: petList,
     );
   } else if (menuItemSelected == 2) {
     return AddPet(
@@ -177,5 +191,6 @@ Widget currentScreen(model.User cUser) {
   }
   return AdoptPetScreen(
     cUser: cUser,
+    petList: petList,
   );
 }

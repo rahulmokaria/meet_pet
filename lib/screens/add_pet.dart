@@ -7,6 +7,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../models/user.dart';
+import '../resources/firestore_methods.dart';
 import '../utils/colors.dart';
 import '../widgets/text_field_ui.dart';
 import 'home_page.dart';
@@ -58,6 +59,31 @@ class _AddPetState extends State<AddPet> {
         TextEditingController(text: widget.cUser.address.country);
     _zipCodeTextController =
         TextEditingController(text: widget.cUser.address.zipCode.toString());
+  }
+
+  addpet() {
+    var res = FireStoreMethods().uploadPet(
+      age: 2.0,
+      breed: 'Labrador',
+      desc:
+          "Everything is so expensive.Going to a bar is a fun thing to do.Here's my big brother. Doesn't he look good?",
+      gender: 'M',
+      imgs: [
+        "https://firebasestorage.googleapis.com/v0/b/meet-pet-c2294.appspot.com/o/BackCoverPics%2FFFFM2xvMslSoaPLqsPLkOTcfV803?alt=media&token=d9488c30-57d9-4c15-9d53-a5c9f2939a17",
+        "https://firebasestorage.googleapis.com/v0/b/meet-pet-c2294.appspot.com/o/BackCoverPics%2FFFFM2xvMslSoaPLqsPLkOTcfV803?alt=media&token=d9488c30-57d9-4c15-9d53-a5c9f2939a17",
+      ],
+      name: 'Duggu',
+      type: 'dog',
+      oldOwner: 'Rahul Mokara',
+      oldOwnerUID: '',
+      datePosted: DateTime.now(),
+      addLine1: "P-131 Near Shivam Appt",
+      addLine2: "RajivNagar",
+      city: "Porbandar",
+      state: "Gujarat",
+      country: "India",
+      zipCode: 360575,
+    );
   }
 
   @override
@@ -303,7 +329,7 @@ class _AddPetState extends State<AddPet> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(_width * 7.5)),
                 child: ElevatedButton(
-                  onPressed: () => addPet(),
+                  onPressed: () => addpet(),
                   style: ButtonStyle(
                     backgroundColor:
                         MaterialStateProperty.resolveWith((states) {
@@ -334,5 +360,3 @@ class _AddPetState extends State<AddPet> {
     );
   }
 }
-
-addPet() {}

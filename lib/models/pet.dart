@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
 import 'address.dart';
@@ -11,7 +12,7 @@ class Pet {
   String breed;
   String desc;
   String gender;
-  List<String> imgs;
+  List<dynamic> imgs;
   String name;
   String oldOwner;
   String oldOwnerUID;
@@ -39,7 +40,7 @@ class Pet {
     String? breed,
     String? desc,
     String? gender,
-    List<String>? imgs,
+    List<dynamic>? imgs,
     String? name,
     String? oldOwner,
     String? oldOwnerUID,
@@ -76,7 +77,7 @@ class Pet {
       'oldOwnerUID': oldOwnerUID,
       'petId': petId,
       'type': type,
-      'datePosted': datePosted.millisecondsSinceEpoch,
+      'datePosted': Timestamp.fromDate(datePosted),
       'address': address.toMap(),
     };
   }
@@ -143,127 +144,127 @@ class Pet {
   }
 }
 
-List<Pet> petList = [
-  Pet(
-    age: 2.0,
-    breed: 'Labrador',
-    desc:
-        "Everything is so expensive.Going to a bar is a fun thing to do.Here's my big brother. Doesn't he look good?",
-    gender: 'M',
-    imgs: [
-      "assets/images/dumbdog.jpg",
-    ],
-    name: 'Duggu',
-    petId: '',
-    type: 'dog',
-    oldOwner: 'Rahul Mokara',
-    oldOwnerUID: '',
-    datePosted: DateTime.now(),
-    address: Address(
-      addLine1: "P-131 Near Shivam Appt",
-      addLine2: "RajivNagar",
-      city: "Porbandar",
-      state: "Gujarat",
-      country: "India",
-      zipCode: 360575,
-    ),
-  ),
-  Pet(
-    age: 1,
-    breed: 'Ginger',
-    desc:
-        "It's not a big room, but it's beautiful.I don't know where the list of my friends went.I am filthy rich.",
-    gender: 'F',
-    imgs: [
-      "assets/images/catbee.jpg",
-      "assets/images/dumbdog.jpg",
-      "assets/images/cutebirt.jpg",
-    ],
-    name: 'Pussy Cat',
-    petId: '',
-    type: 'cat',
-    oldOwner: 'Rahul Mokaria',
-    oldOwnerUID: '',
-    datePosted: DateTime.now(),
-    address: Address(
-      addLine1: "P-131 Near Shivam Appt",
-      addLine2: "RajivNagar",
-      city: "Porbandar",
-      state: "Gujarat",
-      country: "India",
-      zipCode: 360575,
-    ),
-  ),
-  Pet(
-    age: 1.5,
-    breed: 'Parrot',
-    desc:
-        "It's not a big room, but it's beautiful.I don't know where the list of my friends went.I am filthy rich.",
-    gender: 'F',
-    imgs: [
-      "assets/images/cutebirt.jpg",
-    ],
-    name: 'Mithoo',
-    petId: '',
-    type: 'bird',
-    oldOwner: 'Rahul Moaria',
-    oldOwnerUID: '',
-    datePosted: DateTime.now(),
-    address: Address(
-      addLine1: "P-131 Near Shivam Appt",
-      addLine2: "RajivNagar",
-      city: "Porbandar",
-      state: "Gujarat",
-      country: "India",
-      zipCode: 360575,
-    ),
-  ),
-  Pet(
-    age: 4,
-    breed: 'Pug',
-    desc:
-        "It's not a big room, but it's beautiful.I don't know where the list of my friends went.I am filthy rich.",
-    gender: 'M',
-    imgs: [
-      "assets/images/dumbdog.jpg",
-    ],
-    name: 'Lucy',
-    petId: '',
-    type: 'dog',
-    oldOwner: 'Rhul Mokaria',
-    oldOwnerUID: '',
-    datePosted: DateTime.now(),
-    address: Address(
-      addLine1: "P-131 Near Shivam Appt",
-      addLine2: "RajivNagar",
-      city: "Porbandar",
-      state: "Gujarat",
-      country: "India",
-      zipCode: 360575,
-    ),
-  ),
-  Pet(
-    age: 2.0,
-    breed: 'Ginger',
-    desc:
-        "It's not a big room, but it's beautiful.I don't know where the list of my friends went.I am filthy rich.",
-    gender: 'F',
-    imgs: [
-      "assets/images/catbee.jpg",
-    ],
-    name: 'Pussy Cat',
-    petId: '',
-    type: 'cat',
-    oldOwner: 'Rahul Moaria',
-    oldOwnerUID: '',
-    datePosted: DateTime.now(),
-    address: Address(
-      addLine1: "P-131 Near Shivam Appt",
-      addLine2: "RajivNagar",
-      city: "Porbandar",
-      state: "Gujarat",
-      country: "India",
-      zipCode: 360575,
-    ),
-  ),
-];
+// List<Pet> petList = [
+//   Pet(
+//     age: 2.0,
+//     breed: 'Labrador',
+//     desc:
+//         "Everything is so expensive.Going to a bar is a fun thing to do.Here's my big brother. Doesn't he look good?",
+//     gender: 'M',
+//     imgs: [
+//       "assets/images/dumbdog.jpg",
+//     ],
+//     name: 'Duggu',
+//     petId: '',
+//     type: 'dog',
+//     oldOwner: 'Rahul Mokara',
+//     oldOwnerUID: '',
+//     datePosted: DateTime.now(),
+//     address: Address(
+//       addLine1: "P-131 Near Shivam Appt",
+//       addLine2: "RajivNagar",
+//       city: "Porbandar",
+//       state: "Gujarat",
+//       country: "India",
+//       zipCode: 360575,
+//     ),
+//   ),
+//   Pet(
+//     age: 1,
+//     breed: 'Ginger',
+//     desc:
+//         "It's not a big room, but it's beautiful.I don't know where the list of my friends went.I am filthy rich.",
+//     gender: 'F',
+//     imgs: [
+//       "assets/images/catbee.jpg",
+//       "assets/images/dumbdog.jpg",
+//       "assets/images/cutebirt.jpg",
+//     ],
+//     name: 'Pussy Cat',
+//     petId: '',
+//     type: 'cat',
+//     oldOwner: 'Rahul Mokaria',
+//     oldOwnerUID: '',
+//     datePosted: DateTime.now(),
+//     address: Address(
+//       addLine1: "P-131 Near Shivam Appt",
+//       addLine2: "RajivNagar",
+//       city: "Porbandar",
+//       state: "Gujarat",
+//       country: "India",
+//       zipCode: 360575,
+//     ),
+//   ),
+//   Pet(
+//     age: 1.5,
+//     breed: 'Parrot',
+//     desc:
+//         "It's not a big room, but it's beautiful.I don't know where the list of my friends went.I am filthy rich.",
+//     gender: 'F',
+//     imgs: [
+//       "assets/images/cutebirt.jpg",
+//     ],
+//     name: 'Mithoo',
+//     petId: '',
+//     type: 'bird',
+//     oldOwner: 'Rahul Moaria',
+//     oldOwnerUID: '',
+//     datePosted: DateTime.now(),
+//     address: Address(
+//       addLine1: "P-131 Near Shivam Appt",
+//       addLine2: "RajivNagar",
+//       city: "Porbandar",
+//       state: "Gujarat",
+//       country: "India",
+//       zipCode: 360575,
+//     ),
+//   ),
+//   Pet(
+//     age: 4,
+//     breed: 'Pug',
+//     desc:
+//         "It's not a big room, but it's beautiful.I don't know where the list of my friends went.I am filthy rich.",
+//     gender: 'M',
+//     imgs: [
+//       "assets/images/dumbdog.jpg",
+//     ],
+//     name: 'Lucy',
+//     petId: '',
+//     type: 'dog',
+//     oldOwner: 'Rhul Mokaria',
+//     oldOwnerUID: '',
+//     datePosted: DateTime.now(),
+//     address: Address(
+//       addLine1: "P-131 Near Shivam Appt",
+//       addLine2: "RajivNagar",
+//       city: "Porbandar",
+//       state: "Gujarat",
+//       country: "India",
+//       zipCode: 360575,
+//     ),
+//   ),
+//   Pet(
+//     age: 2.0,
+//     breed: 'Ginger',
+//     desc:
+//         "It's not a big room, but it's beautiful.I don't know where the list of my friends went.I am filthy rich.",
+//     gender: 'F',
+//     imgs: [
+//       "assets/images/catbee.jpg",
+//     ],
+//     name: 'Pussy Cat',
+//     petId: '',
+//     type: 'cat',
+//     oldOwner: 'Rahul Moaria',
+//     oldOwnerUID: '',
+//     datePosted: DateTime.now(),
+//     address: Address(
+//       addLine1: "P-131 Near Shivam Appt",
+//       addLine2: "RajivNagar",
+//       city: "Porbandar",
+//       state: "Gujarat",
+//       country: "India",
+//       zipCode: 360575,
+//     ),
+//   ),
+// ];

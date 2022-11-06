@@ -1,9 +1,12 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../models/address.dart';
 import '../models/pet.dart';
 import '../models/user.dart';
 import '../utils/colors.dart';
@@ -12,9 +15,11 @@ import 'home_page.dart';
 
 class AdoptPetScreen extends StatefulWidget {
   final User cUser;
+  final List<Pet> petList;
   const AdoptPetScreen({
     Key? key,
     required this.cUser,
+    required this.petList,
   }) : super(key: key);
 
   @override
@@ -22,6 +27,8 @@ class AdoptPetScreen extends StatefulWidget {
 }
 
 class _AdoptPetScreenState extends State<AdoptPetScreen> {
+  bool _isLoading = false;
+  String category = "All";
   int _selectedCategory = 1;
   Widget filterOption(
     int index,
@@ -32,6 +39,7 @@ class _AdoptPetScreenState extends State<AdoptPetScreen> {
       onTap: () {
         setState(() {
           _selectedCategory = index;
+          category = type;
         });
       },
       child: Neumorphic(
@@ -65,8 +73,42 @@ class _AdoptPetScreenState extends State<AdoptPetScreen> {
     );
   }
 
+  Widget showPetList() {
+    int len = 0;
+
+    for (var pet in widget.petList) {
+      if (category == 'All' || category.toLowerCase() == (pet.type + "s")) {
+        len++;
+      }
+    }
+    if (len == 0) {
+      return Container(
+          height: MediaQuery.of(context).size.height * 0.75,
+          width: MediaQuery.of(context).size.width,
+          child: Center(
+            child: Text(
+              "No pet found for adoption",
+              textScaleFactor: 1.5,
+              style: TextStyle(
+                color: black,
+              ),
+            ),
+          ));
+    } else {
+      return Column(
+        children: [
+          for (var pet in widget.petList) ...[
+            if (category == 'All' || category.toLowerCase() == (pet.type + "s"))
+              landscapePetCard(pet, widget.cUser, context),
+          ]
+        ],
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    // print(petList);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: white,
@@ -90,50 +132,55 @@ class _AdoptPetScreenState extends State<AdoptPetScreen> {
         // shadowColor: secondaryLight,
         shadowColor: Colors.transparent,
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(40),
-            topRight: Radius.circular(40),
-          ),
-          color: secondary,
-        ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: white,
+              ),
+            )
+          : Container(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(40),
+                  topRight: Radius.circular(40),
+                ),
+                color: secondary,
+              ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    const SizedBox(
-                      height: 20,
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Column(
+                        children: [
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Row(
+                            children: [
+                              filterOption(
+                                  1, 'All', 'assets/images/animal-shelter.png'),
+                              filterOption(2, 'Dogs', 'assets/images/dog.png'),
+                              filterOption(3, 'Cats', 'assets/images/cat.png'),
+                              filterOption(
+                                  4, 'Birds', 'assets/images/bird.png'),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                        ],
+                      ),
                     ),
-                    Row(
-                      children: [
-                        filterOption(
-                            1, 'All', 'assets/images/animal-shelter.png'),
-                        filterOption(2, 'Dogs', 'assets/images/dog.png'),
-                        filterOption(3, 'Cats', 'assets/images/cat.png'),
-                        filterOption(4, 'Birds', 'assets/images/bird.png'),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
+                    // const SizedBox(
+                    //   height: 20,
+                    // ),c
+                    showPetList(),
                   ],
                 ),
               ),
-              // const SizedBox(
-              //   height: 20,
-              // ),
-              for (var pet in petList) ...[
-                landscapePetCard(pet, context),
-              ]
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }

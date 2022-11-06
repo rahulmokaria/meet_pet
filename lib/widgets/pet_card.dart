@@ -1,19 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
 import '../models/pet.dart';
+import '../models/user.dart' as model;
 import '../screens/pet_description_page.dart';
 import '../utils/colors.dart';
 
-Widget landscapePetCard(Pet pet, BuildContext context) {
+Widget landscapePetCard(Pet pet, model.User cUser, BuildContext context) {
   return InkWell(
     onTap: () {
       print(FirebaseAuth.instance.currentUser);
       Navigator.of(context).push(MaterialPageRoute(
           builder: (_) => PetDescription(
                 cpet: pet,
+                cuser: cUser,
               )));
     },
     child: Container(
@@ -99,7 +101,7 @@ Widget landscapePetCard(Pet pet, BuildContext context) {
             top: 0,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15),
-              child: Image.asset(
+              child: Image.network(
                 pet.imgs[0],
                 width: 150,
                 height: 150,
@@ -113,12 +115,13 @@ Widget landscapePetCard(Pet pet, BuildContext context) {
   );
 }
 
-Widget portraitPetCard(Pet pet, BuildContext context) {
+Widget portraitPetCard(Pet pet, model.User cUser, BuildContext context) {
   return InkWell(
     onTap: () {
       Navigator.of(context).push(MaterialPageRoute(
           builder: (_) => PetDescription(
                 cpet: pet,
+                cuser: cUser,
               )));
     },
     child: Container(
@@ -151,7 +154,7 @@ Widget portraitPetCard(Pet pet, BuildContext context) {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(
                     MediaQuery.of(context).size.width * 0.025),
-                child: Image.asset(
+                child: Image.network(
                   pet.imgs[0],
                   width: MediaQuery.of(context).size.width * 0.4,
                   height: MediaQuery.of(context).size.width * 0.4,

@@ -16,7 +16,8 @@ class FireStoreMethods {
     required String breed,
     required String desc,
     required String gender,
-    required List<Uint8List> imgs,
+    // required List<Uint8List> imgs,
+    required List<String> imgs,
     required String name,
     required String oldOwner,
     required String oldOwnerUID,
@@ -33,11 +34,11 @@ class FireStoreMethods {
     String res = "Some error occurred";
     try {
       List<String> photoUrls = [];
-      for (var petPhoto in imgs) {
-        String photoUrl = await StorageMethods()
-            .uploadImageToStorage(childName: 'pets', file: petPhoto);
-        photoUrls.add(photoUrl);
-      }
+      // for (var petPhoto in imgs) {
+      //   String photoUrl = await StorageMethods()
+      //       .uploadImageToStorage(childName: 'pets', file: petPhoto);
+      //   photoUrls.add(photoUrl);
+      // }
       // print(photoUrls);
       String petId = const Uuid().v1(); // creates unique id based on time
       Pet pet = Pet(
@@ -50,10 +51,11 @@ class FireStoreMethods {
             zipCode: zipCode),
         age: age,
         breed: breed,
-        datePosted: datePosted,
+        datePosted: DateTime.now(),
         desc: desc,
         gender: gender,
-        imgs: photoUrls,
+        // imgs: photoUrls,
+        imgs: imgs,
         name: name,
         oldOwner: oldOwner,
         oldOwnerUID: oldOwnerUID,

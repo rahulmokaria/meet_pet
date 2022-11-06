@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:meet_pet/screens/forgot_password.dart';
+import 'package:meet_pet/widgets/show_snackbar.dart';
 
 import '../resources/auth_methods.dart';
 import '../utils/colors.dart';
@@ -38,7 +41,8 @@ class _LoginPageState extends State<LoginPage> {
     if (res == 'success') {
       gotoHome();
     } else {
-      // showSnackBar(res, context);
+      ScaffoldMessenger.of(context).showSnackBar(showCustomSnackBar(
+          "Oh Snap!", res, pink, CupertinoIcons.exclamationmark_circle));
     }
     setState(() {
       _isLoading = false;
@@ -96,7 +100,11 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       TextButton(
                         onPressed: () {
-                          Navigator.pushNamed(context, 'forgotPasswordPage');
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const ForgotPasswordPage(),
+                            ),
+                          );
                         },
                         child: Text(
                           'Forgot Password',
@@ -129,7 +137,7 @@ class _LoginPageState extends State<LoginPage> {
                         shape:
                             MaterialStateProperty.all<RoundedRectangleBorder>(
                                 RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30))),
+                                    borderRadius: BorderRadius.circular(100))),
                       ),
                       child: _isLoading
                           ? const Center(

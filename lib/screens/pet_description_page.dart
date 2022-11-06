@@ -1,19 +1,25 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:meet_pet/utils/colors.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 
 import '../models/pet.dart';
+import '../models/user.dart';
 
 class PetDescription extends StatefulWidget {
   Pet cpet;
+  User cuser;
+
   PetDescription({
     Key? key,
     required this.cpet,
+    required this.cuser,
   }) : super(key: key);
   @override
   State<PetDescription> createState() => _PetDescriptionState();
@@ -21,10 +27,18 @@ class PetDescription extends StatefulWidget {
 
 class _PetDescriptionState extends State<PetDescription> {
   int _current = 0;
+  bool isFavPet = false;
   final CarouselController _controller = CarouselController();
+
+  @override
+  void initState() {
+    super.initState();
+    isFavPet = (widget.cuser.favPetList.contains(widget.cpet.petId));
+  }
+
   @override
   Widget build(BuildContext context) {
-    print(widget.cpet.desc);
+    // print(widget.cpet.desc);
     return Scaffold(
       backgroundColor: secondary,
       body: SingleChildScrollView(
@@ -51,7 +65,7 @@ class _PetDescriptionState extends State<PetDescription> {
                       items: widget.cpet.imgs
                           .map((item) => Container(
                                 child: Center(
-                                    child: Image.asset(
+                                    child: Image.network(
                                   item,
                                   fit: BoxFit.cover,
                                   height:
@@ -187,7 +201,13 @@ class _PetDescriptionState extends State<PetDescription> {
                         //image
                         ClipRRect(
                           borderRadius: BorderRadius.circular(25),
-                          child: Image.asset(
+                          child: //Image.network(
+                              // 'assets/images/owl.jpg',
+                              // height: 50,
+                              // width: 50,
+                              // fit: BoxFit.cover,
+                              // ),
+                              Image.asset(
                             'assets/images/owl.jpg',
                             height: 50,
                             width: 50,
@@ -220,11 +240,7 @@ class _PetDescriptionState extends State<PetDescription> {
 
                         Flexible(child: Container(), flex: 1),
                         Text(
-                          widget.cpet.datePosted.day.toString() +
-                              " " +
-                              widget.cpet.datePosted.month.toString() +
-                              " " +
-                              widget.cpet.datePosted.year.toString(),
+                          "${widget.cpet.datePosted.day} ${widget.cpet.datePosted.month} ${widget.cpet.datePosted.year}",
                           textScaleFactor: 1.2,
                           style: TextStyle(
                             color: black.withOpacity(0.5),
@@ -261,14 +277,37 @@ class _PetDescriptionState extends State<PetDescription> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         InkWell(
+                          onTap: () {
+                            if (isFavPet) {
+                              setState(() {
+                                isFavPet = false;
+                              });
+                              widget.cuser.favPetList.remove(widget.cpet.petId);
+                              FirebaseFirestore.instance
+                                  .collection("users")
+                                  .doc(widget.cuser.uid)
+                                  .set(widget.cuser.toMap());
+                            } else {
+                              setState(() {
+                                isFavPet = true;
+                              });
+                              widget.cuser.favPetList.add(widget.cpet.petId);
+                              FirebaseFirestore.instance
+                                  .collection("users")
+                                  .doc(widget.cuser.uid)
+                                  .set(widget.cuser.toMap());
+                            }
+                          },
                           child: Container(
                             padding: const EdgeInsets.all(10),
                             width: MediaQuery.of(context).size.width * 0.2,
                             decoration: BoxDecoration(
                                 color: primary,
                                 borderRadius: BorderRadius.circular(18)),
-                            child: const Icon(
-                              Icons.favorite_border_outlined,
+                            child: Icon(
+                              isFavPet
+                                  ? Icons.favorite
+                                  : Icons.favorite_border_outlined,
                               color: white,
                             ),
                           ),

@@ -10,6 +10,7 @@ import 'package:meet_pet/widgets/pet_card.dart';
 
 import '../models/address.dart';
 import '../models/user.dart' as model;
+import '../resources/firestore_methods.dart';
 import '../utils/colors.dart';
 import 'home_page.dart';
 
@@ -258,7 +259,9 @@ class _UserProfileState extends State<UserProfile> {
                     ),
                   ),
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      // addpet();
+                    },
                     child: Icon(
                       Icons.edit,
                       color: black,
@@ -310,9 +313,9 @@ class _UserProfileState extends State<UserProfile> {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    portraitPetCard(petList[0], context),
-                    portraitPetCard(petList[4], context),
-                    portraitPetCard(petList[3], context),
+                    // portraitPetCard(petList[0], context),
+                    // portraitPetCard(petList[4], context),
+                    // portraitPetCard(petList[3], context),
                   ],
                 ),
               ),
@@ -388,9 +391,9 @@ class _UserProfileState extends State<UserProfile> {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    portraitPetCard(petList[2], context),
-                    portraitPetCard(petList[3], context),
-                    portraitPetCard(petList[4], context),
+                    // portraitPetCard(petList[2], context),
+                    // portraitPetCard(petList[3], context),
+                    // portraitPetCard(petList[4], context),
                   ],
                 ),
               ),
