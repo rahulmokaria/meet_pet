@@ -33,7 +33,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _menuItemSelected = 1;
 
-  bool _isLoading = false;
+  bool _isLoading = true;
   var userData = {};
   var petListdb = [];
   List<Pet> petList = [];
@@ -110,6 +110,42 @@ class _HomePageState extends State<HomePage> {
     // print(userData);
   }
 
+  Widget currentScreen(model.User cUser, List<Pet> petList) {
+    if (menuItemSelected == 1) {
+      return AdoptPetScreen(
+        cUser: cUser,
+        petList: petList,
+      );
+    } else if (menuItemSelected == 2) {
+      return AddPet(
+        cUser: cUser,
+        setIndex: (index) {
+          setState(() {
+            menuItemSelected = index;
+          });
+        },
+      );
+    } else if (menuItemSelected == 3) {
+      // return const FavoriteScreen();
+      return FavoritePetScreen(
+        cUser: cUser,
+        listType: 'Favorite Pets',
+      );
+    } else if (menuItemSelected == 4) {
+      return AllChats(
+        cUser: cUser,
+      );
+    } else if (menuItemSelected == 5) {
+      return UserProfile(
+        cUser: cUser,
+      );
+    }
+    return AdoptPetScreen(
+      cUser: cUser,
+      petList: petList,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     model.User cUser = model.User(
@@ -131,8 +167,14 @@ class _HomePageState extends State<HomePage> {
       profileImg: userData['profileImg'],
       backCoverImg: userData['backCoverImg'],
       favPetList: userData['favPetList'],
+      // petsForAdoption: userData['petsForAdoption'],
+      petsForAdoption: [],
+      petsAdopted: userData['petsAdopted'],
+      // petsAdopted: [],
     );
-
+    setState(() {
+      _isLoading = false;
+    });
     return _isLoading
         ? const Center(
             child: CircularProgressIndicator(
@@ -163,34 +205,4 @@ class _HomePageState extends State<HomePage> {
             menuBackgroundColor: primary,
           );
   }
-}
-
-Widget currentScreen(model.User cUser, List<Pet> petList) {
-  if (menuItemSelected == 1) {
-    return AdoptPetScreen(
-      cUser: cUser,
-      petList: petList,
-    );
-  } else if (menuItemSelected == 2) {
-    return AddPet(
-      cUser: cUser,
-    );
-  } else if (menuItemSelected == 3) {
-    // return const FavoriteScreen();
-    return FavoritePetScreen(
-      cUser: cUser,
-    );
-  } else if (menuItemSelected == 4) {
-    return AllChats(
-      cUser: cUser,
-    );
-  } else if (menuItemSelected == 5) {
-    return UserProfile(
-      cUser: cUser,
-    );
-  }
-  return AdoptPetScreen(
-    cUser: cUser,
-    petList: petList,
-  );
 }

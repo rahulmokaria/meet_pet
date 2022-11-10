@@ -105,7 +105,7 @@ class _MenuScreenState extends State<MenuScreen> {
             menuOption(1, FontAwesomeIcons.paw, "Adoption"),
             menuOption(2, Icons.add, "Add Pet"),
             menuOption(3, Icons.favorite, "Favorites"),
-            menuOption(4, Icons.chat, "Chats"),
+            menuOption(4, Icons.notifications, "Notifications"),
             menuOption(5, Icons.person, "Profile"),
             Flexible(
               flex: 1,

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:meet_pet/models/address.dart';
 import 'package:meet_pet/resources/storage_methods.dart';
 import 'package:uuid/uuid.dart';
@@ -16,13 +17,12 @@ class FireStoreMethods {
     required String breed,
     required String desc,
     required String gender,
-    // required List<Uint8List> imgs,
-    required List<String> imgs,
+    required List<XFile> imgs,
+    // required List<String> imgs,
     required String name,
     required String oldOwner,
     required String oldOwnerUID,
     required String type,
-    required DateTime datePosted,
     required String addLine1,
     required String addLine2,
     required String city,
@@ -34,13 +34,17 @@ class FireStoreMethods {
     String res = "Some error occurred";
     try {
       List<String> photoUrls = [];
-      // for (var petPhoto in imgs) {
-      //   String photoUrl = await StorageMethods()
-      //       .uploadImageToStorage(childName: 'pets', file: petPhoto);
-      //   photoUrls.add(photoUrl);
-      // }
-      // print(photoUrls);
+      for (var petPhoto in imgs) {
+        Uint8List photo = await petPhoto.readAsBytes();
+
+        String photoUrl = await StorageMethods()
+            .uploadImageToStorage(childName: 'pets', file: photo, isPet: true);
+
+        photoUrls.add(photoUrl);
+      }
+
       String petId = const Uuid().v1(); // creates unique id based on time
+
       Pet pet = Pet(
         address: Address(
             addLine1: addLine1,
@@ -54,15 +58,22 @@ class FireStoreMethods {
         datePosted: DateTime.now(),
         desc: desc,
         gender: gender,
-        // imgs: photoUrls,
-        imgs: imgs,
+        imgs: photoUrls,
         name: name,
         oldOwner: oldOwner,
         oldOwnerUID: oldOwnerUID,
         petId: petId,
         type: type,
       );
-      _firestore.collection('pets').doc(petId).set(pet.toMap());
+
+      var uploadPetData = pet.toMap();
+
+      print(uploadPetData);
+      await _firestore.collection('pets').doc(petId).set(uploadPetData);
+
+      await _firestore.collection('users').doc(oldOwnerUID).update({
+        'petsForAdoption': FieldValue.arrayUnion([petId])
+      });
       res = "success";
     } catch (err) {
       res = err.toString();

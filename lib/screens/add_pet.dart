@@ -1,10 +1,15 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
+
+import 'package:meet_pet/widgets/show_snackbar.dart';
 
 import '../models/user.dart';
 import '../resources/firestore_methods.dart';
@@ -14,9 +19,11 @@ import 'home_page.dart';
 
 class AddPet extends StatefulWidget {
   final User cUser;
+  final ValueSetter setIndex;
   const AddPet({
     Key? key,
     required this.cUser,
+    required this.setIndex,
   }) : super(key: key);
 
   @override
@@ -24,12 +31,15 @@ class AddPet extends StatefulWidget {
 }
 
 class _AddPetState extends State<AddPet> {
+  bool _isLoading = false;
   final TextEditingController _breedTextController = TextEditingController();
   final TextEditingController _ageTextController = TextEditingController();
   final TextEditingController _descTextController = TextEditingController();
-  final TextEditingController _genderTextController = TextEditingController();
+
   final TextEditingController _nameTextController = TextEditingController();
   final TextEditingController _typeTextController = TextEditingController();
+  final ImagePicker imgPicker = ImagePicker();
+  List<XFile> imageFiles = [];
 
   var dropdownGender = 'Male';
   var genderCategories = [
@@ -61,36 +71,94 @@ class _AddPetState extends State<AddPet> {
         TextEditingController(text: widget.cUser.address.zipCode.toString());
   }
 
-  addpet() {
+  @override
+  dispose() {
+    super.dispose();
+    _breedTextController.dispose();
+    _ageTextController.dispose();
+    _descTextController.dispose();
+    _nameTextController.dispose();
+    _typeTextController.dispose();
+    _addLine1TextController.dispose();
+    _addLine2TextController.dispose();
+    _cityTextController.dispose();
+    _stateTextController.dispose();
+    _countryTextController.dispose();
+    _zipCodeTextController.dispose();
+  }
+
+  addPet() {
+    setState(() {
+      _isLoading = true;
+    });
     var res = FireStoreMethods().uploadPet(
-      age: 2.0,
-      breed: 'Labrador',
-      desc:
-          "Everything is so expensive.Going to a bar is a fun thing to do.Here's my big brother. Doesn't he look good?",
-      gender: 'M',
-      imgs: [
-        "https://firebasestorage.googleapis.com/v0/b/meet-pet-c2294.appspot.com/o/BackCoverPics%2FFFFM2xvMslSoaPLqsPLkOTcfV803?alt=media&token=d9488c30-57d9-4c15-9d53-a5c9f2939a17",
-        "https://firebasestorage.googleapis.com/v0/b/meet-pet-c2294.appspot.com/o/BackCoverPics%2FFFFM2xvMslSoaPLqsPLkOTcfV803?alt=media&token=d9488c30-57d9-4c15-9d53-a5c9f2939a17",
-      ],
-      name: 'Duggu',
-      type: 'dog',
-      oldOwner: 'Rahul Mokara',
-      oldOwnerUID: '',
-      datePosted: DateTime.now(),
-      addLine1: "P-131 Near Shivam Appt",
-      addLine2: "RajivNagar",
-      city: "Porbandar",
-      state: "Gujarat",
-      country: "India",
-      zipCode: 360575,
+      age: double.parse(_ageTextController.text),
+      breed: _breedTextController.text,
+      desc: _descTextController.text,
+      gender: dropdownGender[0],
+      imgs: imageFiles,
+      name: _nameTextController.text,
+      type: _typeTextController.text,
+      oldOwner: "${widget.cUser.firstName} ${widget.cUser.lastName}",
+      oldOwnerUID: widget.cUser.uid,
+      addLine1: _addLine1TextController.text,
+      addLine2: _addLine2TextController.text,
+      city: _cityTextController.text,
+      state: _stateTextController.text,
+      country: _countryTextController.text,
+      zipCode: int.parse(_zipCodeTextController.text),
     );
+    setState(() {
+      _isLoading = false;
+      menuItemSelected = 1;
+    });
+    if (res == "success") {
+      showCustomSnackBar(
+          "Awww, So Cute!!!",
+          dropdownGender[0] == 'M'
+              ? "Isn't he the cutest${_typeTextController.text} ever"
+              : "Isn't she the cutest${_typeTextController.text} ever",
+          primary,
+          Icons.favorite);
+      widget.setIndex(1);
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (_) => const HomePage()));
+    } else {
+      showCustomSnackBar("Some error occurred, Try again", "", pink,
+          CupertinoIcons.exclamationmark_circle);
+    }
+  }
+
+  responseImageSelection() async {
+    String s = await openImages();
+    if (s == "success")
+      showCustomSnackBar("So Cute!!!", "", primary, Icons.favorite);
+    else {
+      showCustomSnackBar("Some error occurred, Try again", "", pink,
+          CupertinoIcons.exclamationmark_circle);
+    }
+  }
+
+  Future<String> openImages() async {
+    try {
+      var pickedFiles = await imgPicker.pickMultiImage();
+      //you can use ImageCourse.camera for Camera capture
+      if (pickedFiles != null) {
+        imageFiles = pickedFiles;
+        setState(() {});
+        return "success";
+      } else {
+        return "No image is selected.";
+      }
+    } catch (e) {
+      return "error while picking file.";
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     double _width = MediaQuery.of(context).size.width * 0.01;
     double _height = MediaQuery.of(context).size.height * 0.01;
-    // print(_width);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: white,
@@ -115,7 +183,7 @@ class _AddPetState extends State<AddPet> {
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.all(
-            MediaQuery.of(context).size.width * 0.02,
+            MediaQuery.of(context).size.width * 0.05,
           ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.only(
@@ -136,6 +204,70 @@ class _AddPetState extends State<AddPet> {
                     textScaleFactor: 1.2,
                     style: TextStyle(color: black),
                   ),
+                ),
+              ),
+              if (imageFiles.isNotEmpty)
+                Container(
+                  padding: EdgeInsets.only(left: _width * 5),
+                  child: Text(
+                    "Pet Photos:",
+                    style: TextStyle(color: black),
+                  ),
+                ),
+              Wrap(
+                children: imageFiles.map((imageone) {
+                  return Container(
+                      child: Card(
+                    child: Container(
+                      height: 100,
+                      width: 100,
+                      child: Image.file(
+                        File(imageone.path),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ));
+                }).toList(),
+              ),
+              SizedBox(
+                height: _width * 7,
+              ),
+              InkWell(
+                onTap: () => responseImageSelection(),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: _width * 15,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(_width * 7.5),
+                      color: white),
+                  child: Center(
+                    child: Text(
+                      "Upload Pet's photos",
+                      textScaleFactor: 1.2,
+                      style: TextStyle(
+                        color: primary,
+                        fontWeight: FontWeight.bold,
+                        // fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  // child: ElevatedButton(
+                  //   // onPressed: () => responseImageSelection(),
+                  //   // style: ButtonStyle(
+                  //   //   backgroundColor:
+                  //   //       MaterialStateProperty.resolveWith((states) {
+                  //   //     if (states.contains(MaterialState.pressed)) {
+                  //   //       return primary;
+                  //   //     }
+                  //   //     return white;
+                  //   //   }),
+                  //   //   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  //   //       RoundedRectangleBorder(
+                  //   //           borderRadius:
+                  //   //               BorderRadius.circular(_width * 7.5))),
+                  //   // ),
+
+                  // ),
                 ),
               ),
               SizedBox(
@@ -161,7 +293,7 @@ class _AddPetState extends State<AddPet> {
                 ),
               ),
               textFieldUi('Eg: Labrador', Icons.person, false,
-                  _breedTextController, TextInputType.name),
+                  _breedTextController, TextInputType.emailAddress),
               SizedBox(
                 height: _width * 7,
               ),
@@ -329,7 +461,7 @@ class _AddPetState extends State<AddPet> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(_width * 7.5)),
                 child: ElevatedButton(
-                  onPressed: () => addpet(),
+                  onPressed: () => addPet(),
                   style: ButtonStyle(
                     backgroundColor:
                         MaterialStateProperty.resolveWith((states) {
@@ -342,15 +474,21 @@ class _AddPetState extends State<AddPet> {
                         RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(_width * 7.5))),
                   ),
-                  child: const Text(
-                    "Add Pet for Adoption",
-                    textScaleFactor: 1.2,
-                    style: TextStyle(
-                      color: secondary,
-                      fontWeight: FontWeight.bold,
-                      // fontSize: 16,
-                    ),
-                  ),
+                  child: _isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: white,
+                          ),
+                        )
+                      : const Text(
+                          "Add Pet for Adoption",
+                          textScaleFactor: 1.2,
+                          style: TextStyle(
+                            color: secondary,
+                            fontWeight: FontWeight.bold,
+                            // fontSize: 16,
+                          ),
+                        ),
                 ),
               ),
             ],

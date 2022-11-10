@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:meet_pet/models/pet.dart';
 import 'package:meet_pet/screens/add_pet.dart';
+import 'package:meet_pet/screens/favorite_pets.dart';
 import 'package:meet_pet/widgets/pet_card.dart';
 
 import '../models/address.dart';
@@ -27,51 +28,106 @@ class UserProfile extends StatefulWidget {
 
 class _UserProfileState extends State<UserProfile> {
   bool _isLoading = false;
-  var userData = {};
+  int _selectedCategory = 1;
+
+  Map petListdb = {};
+  List<Pet> petsForAdoptionList = [];
+  List<Pet> petsAdoptedList = [];
+  @override
+  void initState() {
+    super.initState();
+    addData();
+  }
+
+  addData() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      for (var p in widget.cUser.petsForAdoption) {
+        DocumentSnapshot<Map<String, dynamic>> petSnap =
+            await FirebaseFirestore.instance.collection('pets').doc(p).get();
+
+        var pet = petSnap.data()!;
+        var curPet = Pet(
+          age: pet["age"],
+          breed: pet["breed"],
+          desc: pet["desc"],
+          gender: pet["gender"],
+          imgs: pet["imgs"], // problem
+          name: pet["name"],
+          oldOwner: pet["oldOwner"],
+          oldOwnerUID: pet["oldOwnerUID"],
+          petId: pet["petId"],
+          type: pet["type"],
+          datePosted: pet["datePosted"].toDate(), //problem
+          address: Address(
+            addLine1: pet["address"]["addLine1"],
+            addLine2: pet["address"]["addLine2"],
+            city: pet["address"]["city"],
+            state: pet["address"]["state"],
+            country: pet["address"]["country"],
+            zipCode: pet["address"]["zipCode"],
+          ),
+        );
+
+        petsForAdoptionList.add(curPet);
+      }
+      for (var p in widget.cUser.petsAdopted) {
+        DocumentSnapshot<Map<String, dynamic>> petSnap =
+            await FirebaseFirestore.instance.collection('pets').doc(p).get();
+
+        var pet = petSnap.data()!;
+        var curPet = Pet(
+          age: pet["age"],
+          breed: pet["breed"],
+          desc: pet["desc"],
+          gender: pet["gender"],
+          imgs: pet["imgs"], // problem
+          name: pet["name"],
+          oldOwner: pet["oldOwner"],
+          oldOwnerUID: pet["oldOwnerUID"],
+          petId: pet["petId"],
+          type: pet["type"],
+          datePosted: pet["datePosted"].toDate(), //problem
+          address: Address(
+            addLine1: pet["address"]["addLine1"],
+            addLine2: pet["address"]["addLine2"],
+            city: pet["address"]["city"],
+            state: pet["address"]["state"],
+            country: pet["address"]["country"],
+            zipCode: pet["address"]["zipCode"],
+          ),
+        );
+
+        petsAdoptedList.add(curPet);
+      }
+    } catch (e) {
+      // showSnackBar(
+      //   context,
+      //   e.toString(),
+      // );
+    }
+    setState(() {
+      _isLoading = false;
+    });
+    // print(userData);
+  }
+
   void navigateToAddPet() {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => AddPet(
           cUser: widget.cUser,
+          setIndex: (index) {
+            setState(() {
+              menuItemSelected = index;
+            });
+          },
         ),
       ),
     );
   }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   getData();
-  // }
-
-  // getData() async {
-  //   setState(() {
-  //     _isLoading = true;
-  //   });
-  //   try {
-  //     var userSnap = await FirebaseFirestore.instance
-  //         .collection('users')
-  //         .doc(widget.userId)
-  //         .get();
-
-  //     // get post lENGTH
-  //     var petForAdoptionSnap = await FirebaseFirestore.instance
-  //         .collection('pets')
-  //         .where('oldOwnerUID',
-  //             isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-  //         .get();
-
-  //     userData = userSnap.data()!;
-  //   } catch (e) {
-  //     // showSnackBar(
-  //     //   context,
-  //     //   e.toString(),
-  //     // );
-  //   }
-  //   setState(() {
-  //     _isLoading = false;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -298,6 +354,13 @@ class _UserProfileState extends State<UserProfile> {
                       InkWell(
                         onTap: () {
                           print("All pets put for adoption");
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => FavoritePetScreen(
+                                  cUser: widget.cUser,
+                                  listType: "Pets For Adoption"),
+                            ),
+                          );
                         },
                         child: Icon(
                           FontAwesomeIcons.chevronDown,
@@ -309,16 +372,29 @@ class _UserProfileState extends State<UserProfile> {
                   ),
                 ),
               ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    // portraitPetCard(petList[0], context),
-                    // portraitPetCard(petList[4], context),
-                    // portraitPetCard(petList[3], context),
-                  ],
-                ),
-              ),
+              (petsForAdoptionList.isEmpty)
+                  ? SizedBox(
+                      height: _width * 0.8,
+                      width: _width,
+                      child: Center(
+                        child: Text(
+                          "No Pets put for adoption",
+                          style: TextStyle(
+                            color: black,
+                          ),
+                        ),
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          for (var pet in petsForAdoptionList) ...[
+                            portraitPetCard(pet, widget.cUser, context),
+                          ]
+                        ],
+                      ),
+                    ),
               Container(
                 width: MediaQuery.of(context).size.width,
                 height: _width * 15,
@@ -376,6 +452,13 @@ class _UserProfileState extends State<UserProfile> {
                       InkWell(
                         onTap: () {
                           print("All pets adopted");
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => FavoritePetScreen(
+                                  cUser: widget.cUser,
+                                  listType: "Pets Adopted"),
+                            ),
+                          );
                         },
                         child: Icon(
                           FontAwesomeIcons.chevronDown,
@@ -387,16 +470,29 @@ class _UserProfileState extends State<UserProfile> {
                   ),
                 ),
               ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    // portraitPetCard(petList[2], context),
-                    // portraitPetCard(petList[3], context),
-                    // portraitPetCard(petList[4], context),
-                  ],
-                ),
-              ),
+              (petsAdoptedList.isEmpty)
+                  ? SizedBox(
+                      width: _width,
+                      height: _width * 0.8,
+                      child: Center(
+                        child: Text(
+                          "No Pets adopted",
+                          style: TextStyle(
+                            color: black,
+                          ),
+                        ),
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          for (var pet in petsAdoptedList) ...[
+                            portraitPetCard(pet, widget.cUser, context),
+                          ]
+                        ],
+                      ),
+                    ),
               Container(
                 child: Divider(
                   color: primary,

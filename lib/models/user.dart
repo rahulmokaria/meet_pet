@@ -19,6 +19,8 @@ class User {
   String contactNo;
   Address address;
   List<dynamic> favPetList;
+  List<dynamic> petsForAdoption;
+  List<dynamic> petsAdopted;
   User({
     required this.uid,
     required this.userName,
@@ -31,30 +33,33 @@ class User {
     required this.contactNo,
     required this.address,
     required this.favPetList,
+    required this.petsForAdoption,
+    required this.petsAdopted,
   });
 
   static User fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
     return User(
-      address: Address(
-        addLine1: snapshot['address'],
-        addLine2: snapshot['address'],
-        city: snapshot['address'],
-        state: snapshot['address'],
-        country: snapshot['address'],
-        zipCode: snapshot['address'],
-      ),
-      backCoverImg: snapshot['backCoverImg'],
-      contactNo: snapshot['contactNo'],
-      dob: snapshot['dob'],
-      emailId: snapshot['emailId'],
-      favPetList: snapshot['favPetList'],
-      firstName: snapshot['firstName'],
-      lastName: snapshot['lastName'],
-      profileImg: snapshot['profileImg'],
-      uid: snapshot['uid'],
-      userName: snapshot['userName'],
-    );
+        address: Address(
+          addLine1: snapshot['address'],
+          addLine2: snapshot['address'],
+          city: snapshot['address'],
+          state: snapshot['address'],
+          country: snapshot['address'],
+          zipCode: snapshot['address'],
+        ),
+        backCoverImg: snapshot['backCoverImg'],
+        contactNo: snapshot['contactNo'],
+        dob: snapshot['dob'],
+        emailId: snapshot['emailId'],
+        favPetList: snapshot['favPetList'],
+        firstName: snapshot['firstName'],
+        lastName: snapshot['lastName'],
+        profileImg: snapshot['profileImg'],
+        uid: snapshot['uid'],
+        userName: snapshot['userName'],
+        petsForAdoption: snapshot['petsForAdoption'],
+        petsAdopted: snapshot['petsAdopted']);
   }
 
   User copyWith({
@@ -68,7 +73,9 @@ class User {
     String? emailId,
     String? contactNo,
     Address? address,
-    List<String>? favPetList,
+    List<dynamic>? favPetList,
+    List<dynamic>? petsForAdoption,
+    List<dynamic>? petsAdopted,
   }) {
     return User(
       uid: uid ?? this.uid,
@@ -82,6 +89,8 @@ class User {
       contactNo: contactNo ?? this.contactNo,
       address: address ?? this.address,
       favPetList: favPetList ?? this.favPetList,
+      petsForAdoption: petsForAdoption ?? this.petsForAdoption,
+      petsAdopted: petsAdopted ?? this.petsAdopted,
     );
   }
 
@@ -93,11 +102,13 @@ class User {
       'lastName': lastName,
       'profileImg': profileImg,
       'backCoverImg': backCoverImg,
-      'dob': dob..millisecondsSinceEpoch,
+      'dob': Timestamp.fromDate(dob),
       'emailId': emailId,
       'contactNo': contactNo,
       'address': address.toMap(),
       'favPetList': favPetList,
+      'petsForAdoption': petsForAdoption,
+      'petsAdopted': petsAdopted,
     };
   }
 
@@ -113,9 +124,10 @@ class User {
       emailId: map['emailId'] as String,
       contactNo: map['contactNo'] as String,
       address: Address.fromMap(map['address'] as Map<String, dynamic>),
-      favPetList: List<String>.from(
-        (map['favPetList'] as List<String>),
-      ),
+      favPetList: List<dynamic>.from(map['favPetList'] as List<dynamic>),
+      petsForAdoption:
+          List<dynamic>.from(map['petsForAdoption'] as List<dynamic>),
+      petsAdopted: List<dynamic>.from(map['petsAdopted'] as List<dynamic>),
     );
   }
 
@@ -126,7 +138,7 @@ class User {
 
   @override
   String toString() {
-    return 'User(uid: $uid, userName: $userName, firstName: $firstName, lastName: $lastName, profileImg: $profileImg, backCoverImg: $backCoverImg, dob: $dob, emailId: $emailId, contactNo: $contactNo, address: $address, favPetList: $favPetList)';
+    return 'User(uid: $uid, userName: $userName, firstName: $firstName, lastName: $lastName, profileImg: $profileImg, backCoverImg: $backCoverImg, dob: $dob, emailId: $emailId, contactNo: $contactNo, address: $address, favPetList: $favPetList, petsForAdoption: $petsForAdoption, petsAdopted: $petsAdopted)';
   }
 
   @override
@@ -143,7 +155,9 @@ class User {
         other.emailId == emailId &&
         other.contactNo == contactNo &&
         other.address == address &&
-        listEquals(other.favPetList, favPetList);
+        listEquals(other.favPetList, favPetList) &&
+        listEquals(other.petsForAdoption, petsForAdoption) &&
+        listEquals(other.petsAdopted, petsAdopted);
   }
 
   @override
@@ -158,7 +172,9 @@ class User {
         emailId.hashCode ^
         contactNo.hashCode ^
         address.hashCode ^
-        favPetList.hashCode;
+        favPetList.hashCode ^
+        petsForAdoption.hashCode ^
+        petsAdopted.hashCode;
   }
 }
 

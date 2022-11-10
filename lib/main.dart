@@ -7,7 +7,7 @@ import 'package:meet_pet/screens/home_page.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/user_provider.dart';
-import 'screens/landing_screen.dart';
+import 'screens/login_page.dart';
 import 'utils/colors.dart';
 
 Future<void> main() async {
@@ -27,6 +27,41 @@ Future<void> main() async {
   } else {
     await Firebase.initializeApp();
   }
+  ErrorWidget.builder = (FlutterErrorDetails details) => MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          body: Container(
+            color: secondary,
+            child: Center(
+              child: Column(
+                children: [
+                  Flexible(
+                    child: Container(),
+                    flex: 10,
+                  ),
+                  Image.asset(
+                    'assets/images/logo.png',
+                    color: primary,
+                    height: 100,
+                    width: 100,
+                  ),
+                  Flexible(
+                    child: Container(),
+                    flex: 1,
+                  ),
+                  CircularProgressIndicator(
+                    color: primary,
+                  ),
+                  Flexible(
+                    child: Container(),
+                    flex: 10,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
   runApp(const MyApp());
 }
 
@@ -76,7 +111,7 @@ class MyApp extends StatelessWidget {
               );
             }
 
-            return const LandingPage();
+            return const LoginPage();
           },
         ),
       ),

@@ -16,9 +16,11 @@ import 'home_page.dart';
 
 class FavoritePetScreen extends StatefulWidget {
   final model.User cUser;
+  final String listType;
   const FavoritePetScreen({
     Key? key,
     required this.cUser,
+    required this.listType,
   }) : super(key: key);
 
   @override
@@ -43,7 +45,12 @@ class _FavoritePetScreenState extends State<FavoritePetScreen> {
       _isLoading = true;
     });
     try {
-      for (var p in widget.cUser.favPetList) {
+      List<dynamic> petList = (widget.listType == "Favorite Pets")
+          ? widget.cUser.favPetList
+          : (widget.listType == "Pets For Adoption")
+              ? widget.cUser.petsForAdoption
+              : widget.cUser.petsAdopted;
+      for (var p in petList) {
         DocumentSnapshot<Map<String, dynamic>> petSnap =
             await FirebaseFirestore.instance.collection('pets').doc(p).get();
 
@@ -141,7 +148,7 @@ class _FavoritePetScreenState extends State<FavoritePetScreen> {
           width: MediaQuery.of(context).size.width,
           child: Center(
             child: Text(
-              "No pet found for adoption",
+              "No pet found",
               textScaleFactor: 1.5,
               style: TextStyle(
                 color: black,
@@ -167,7 +174,12 @@ class _FavoritePetScreenState extends State<FavoritePetScreen> {
       appBar: AppBar(
         backgroundColor: white,
         title: Text(
-          "Favorite Pets",
+          widget.listType,
+          // (widget.listType == "favPetList")
+          //     ? "Favorite Pets"
+          //     : (widget.listType == "petsForAdoption")
+          //         ? "Pets For Adoption"
+          //         : "Pets Adopted",
           style: TextStyle(
             color: primary,
           ),

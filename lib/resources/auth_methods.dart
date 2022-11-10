@@ -56,15 +56,15 @@ class AuthMethods {
             email: email, password: password);
 
         String profilePicUrl = await StorageMethods().uploadImageToStorage(
-            childName: "ProfilePics", file: profilePicFile);
+            childName: "ProfilePics", file: profilePicFile, isPet: false);
         String backCoverPicUrl = await StorageMethods().uploadImageToStorage(
-            childName: "BackCoverPics", file: backCoverPicFile);
+            childName: "BackCoverPics", file: backCoverPicFile, isPet: false);
 
         model.User user = model.User(
           userName: userName,
           firstName: firstName,
           lastName: lastName,
-          dob: dob,
+          dob: dob ,
           emailId: email,
           contactNo: contactNumber.toString(),
           uid: cred.user!.uid,
@@ -79,6 +79,8 @@ class AuthMethods {
             zipCode: zipCode,
           ),
           favPetList: [],
+          petsAdopted: [],
+          petsForAdoption: [],
         );
 
         // print(user);

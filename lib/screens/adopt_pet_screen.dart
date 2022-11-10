@@ -77,7 +77,8 @@ class _AdoptPetScreenState extends State<AdoptPetScreen> {
     int len = 0;
 
     for (var pet in widget.petList) {
-      if (category == 'All' || category.toLowerCase() == (pet.type + "s")) {
+      if (category == 'All' ||
+          category.toLowerCase() == (pet.type + "s").toLowerCase()) {
         len++;
       }
     }

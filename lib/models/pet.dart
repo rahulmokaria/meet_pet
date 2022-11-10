@@ -16,6 +16,8 @@ class Pet {
   String name;
   String oldOwner;
   String oldOwnerUID;
+  String newOwner = "dummy-user";
+  String newOwnerUID = "dummy-user";
   String petId;
   String type;
   DateTime datePosted;
