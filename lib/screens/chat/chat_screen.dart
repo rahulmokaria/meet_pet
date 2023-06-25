@@ -6,12 +6,11 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../models/message.dart';
-import '../resources/chat_methods.dart';
-import '../widgets/chat_bubble.dart';
-import '../models/user.dart';
-import '../utils/colors.dart';
-import 'home_page.dart';
+import '../../../models/message.dart';
+import '../../../resources/chat_methods.dart';
+import '../../../widgets/chat_bubble.dart';
+import '../../../models/user.dart';
+import '../../../utils/colors.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';

@@ -7,7 +7,7 @@ import 'package:meet_pet/screens/home_page.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/user_provider.dart';
-import 'screens/login_page.dart';
+import 'screens/login_signup/login_page.dart';
 import 'utils/colors.dart';
 
 Future<void> main() async {

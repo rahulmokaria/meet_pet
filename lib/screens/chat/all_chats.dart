@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../models/user.dart';
+import '../../models/user.dart';
 import 'package:meet_pet/models/chatroom.dart';
-import '../utils/colors.dart';
+import '../../utils/colors.dart';
 import 'chat_screen.dart';
-import 'home_page.dart';
+import '../home_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meet_pet/resources/chat_methods.dart';
 

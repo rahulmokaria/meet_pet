@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 import 'dart:typed_data';
-
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -83,11 +83,73 @@ class _AddPetState extends State<AddPet> {
     _zipCodeTextController.dispose();
   }
 
-  addPet() {
+  addPet() async {
     setState(() {
       _isLoading = true;
     });
-    var res = FireStoreMethods().uploadPet(
+    if (imageFiles.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        showCustomSnackBar(
+          ctype: ContentType.help,
+          message: "Please add pet images and try again.",
+        ),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+    if (_nameTextController.text == "") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        showCustomSnackBar(
+          ctype: ContentType.help,
+          message: "Please add pet name and try again.",
+        ),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+    if (_breedTextController.text == "") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        showCustomSnackBar(
+          ctype: ContentType.help,
+          message:
+              "Please add pet breed and try again. If not known fill Unknown.",
+        ),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+    if (_descTextController.text == "") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        showCustomSnackBar(
+          ctype: ContentType.help,
+          message: "Please add pet description and try again.",
+        ),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+    if (_ageTextController.text == "") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        showCustomSnackBar(
+          ctype: ContentType.help,
+          message: "plz enter age and, Try again",
+        ),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    var res = await FireStoreMethods().uploadPet(
       age: double.parse(_ageTextController.text),
       breed: _breedTextController.text,
       desc: _descTextController.text,
@@ -103,34 +165,48 @@ class _AddPetState extends State<AddPet> {
       country: _countryTextController.text,
       zipCode: int.parse(_zipCodeTextController.text),
     );
-    setState(() {
-      _isLoading = false;
-      menuItemSelected = 1;
-    });
+    print(res);
     if (res == "success") {
-      showCustomSnackBar(
-          "Awww, So Cute!!!",
-          dropdownGender[0] == 'M'
-              ? "Isn't he the cutest${_typeTextController.text} ever"
-              : "Isn't she the cutest${_typeTextController.text} ever",
-          primary,
-          Icons.favorite);
+      ScaffoldMessenger.of(context).showSnackBar(
+        showCustomSnackBar(
+          ctype: ContentType.success,
+          message: dropdownGender[0] == 'M'
+              ? "Isn't he the cutest ${_typeTextController.text.toLowerCase()} ever"
+              : "Isn't she the cutest ${_typeTextController.text.toLowerCase()} ever",
+        ),
+      );
       widget.setIndex(1);
       Navigator.of(context)
           .pushReplacement(MaterialPageRoute(builder: (_) => const HomePage()));
     } else {
-      showCustomSnackBar("Some error occurred, Try again", "", pink,
-          CupertinoIcons.exclamationmark_circle);
+      ScaffoldMessenger.of(context).showSnackBar(
+        showCustomSnackBar(
+          ctype: ContentType.failure,
+          message: "Some error occurred, Try again + " + res,
+        ),
+      );
     }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   responseImageSelection() async {
     String s = await openImages();
-    if (s == "success")
-      showCustomSnackBar("So Cute!!!", "", primary, Icons.favorite);
-    else {
-      showCustomSnackBar("Some error occurred, Try again", "", pink,
-          CupertinoIcons.exclamationmark_circle);
+    if (s == "success") {
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   showCustomSnackBar(
+      //     ctype: ContentType.success,
+      //     message: "So Cute!!!",
+      //   ),
+      // );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        showCustomSnackBar(
+          ctype: ContentType.failure,
+          message: "Some error occurred, Try again",
+        ),
+      );
     }
   }
 
@@ -178,13 +254,12 @@ class _AddPetState extends State<AddPet> {
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.all(
-            MediaQuery.of(context).size.width * 0.05,
+            _width * 5,
           ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(_width * 10),
-              topRight:
-                  Radius.circular(MediaQuery.of(context).size.width * 0.1),
+              topRight: Radius.circular(_width * 10),
             ),
             color: secondary,
           ),
@@ -214,8 +289,8 @@ class _AddPetState extends State<AddPet> {
                   return Container(
                       child: Card(
                     child: Container(
-                      height: 100,
-                      width: 100,
+                      height: _width * 27,
+                      width: _width * 27,
                       child: Image.file(
                         File(imageone.path),
                         fit: BoxFit.cover,
@@ -230,7 +305,7 @@ class _AddPetState extends State<AddPet> {
               InkWell(
                 onTap: () => responseImageSelection(),
                 child: Container(
-                  width: MediaQuery.of(context).size.width,
+                  width: _width * 100,
                   height: _width * 15,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(_width * 7.5),
@@ -246,23 +321,6 @@ class _AddPetState extends State<AddPet> {
                       ),
                     ),
                   ),
-                  // child: ElevatedButton(
-                  //   // onPressed: () => responseImageSelection(),
-                  //   // style: ButtonStyle(
-                  //   //   backgroundColor:
-                  //   //       MaterialStateProperty.resolveWith((states) {
-                  //   //     if (states.contains(MaterialState.pressed)) {
-                  //   //       return primary;
-                  //   //     }
-                  //   //     return white;
-                  //   //   }),
-                  //   //   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  //   //       RoundedRectangleBorder(
-                  //   //           borderRadius:
-                  //   //               BorderRadius.circular(_width * 7.5))),
-                  //   // ),
-
-                  // ),
                 ),
               ),
               SizedBox(
@@ -345,8 +403,8 @@ class _AddPetState extends State<AddPet> {
                       ),
                       textScaleFactor: 1.2,
                     ),
-                    const SizedBox(
-                      width: 70,
+                    SizedBox(
+                      width: _width * 20,
                     ),
                     DropdownButton(
                       value: dropdownGender,
@@ -427,7 +485,7 @@ class _AddPetState extends State<AddPet> {
                 height: _width * 7,
               ),
               Container(
-                width: MediaQuery.of(context).size.width,
+                width: _width * 100,
                 height: _width * 15,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(_width * 7.5)),

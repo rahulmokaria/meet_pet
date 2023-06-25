@@ -7,7 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 import '../models/user.dart' as model;
-import '../screens/login_page.dart';
+import '../screens/login_signup/login_page.dart';
 import '../screens/home_page.dart';
 import '../utils/colors.dart';
 

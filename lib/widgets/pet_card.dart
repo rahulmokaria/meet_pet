@@ -8,10 +8,15 @@ import '../models/user.dart' as model;
 import '../screens/pet_description_page.dart';
 import '../utils/colors.dart';
 
-Widget landscapePetCard(Pet pet, model.User cUser, BuildContext context) {
+Widget landscapePetCard(
+    {required Pet pet,
+    required model.User cUser,
+    required BuildContext context,
+    required bool listType}) {
+  //listType= true when all pets are shown and =false when custom
   return InkWell(
     onTap: () {
-      print(FirebaseAuth.instance.currentUser);
+      // print(FirebaseAuth.instance.currentUser);
       Navigator.of(context).push(MaterialPageRoute(
           builder: (_) => PetDescription(
                 cpet: pet,
@@ -85,7 +90,10 @@ Widget landscapePetCard(Pet pet, model.User cUser, BuildContext context) {
                             size: 20,
                           ),
                           Text(
-                            (pet.distance / 1000).round().toString() + " km",
+                            (listType == true)
+                                ? (pet.distance / 1000).round().toString() +
+                                    " km"
+                                : pet.address.city,
                             style: TextStyle(color: black),
                           ),
                         ],

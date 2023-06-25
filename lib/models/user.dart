@@ -93,6 +93,52 @@ class User {
     );
   }
 
+  User.dummyUser()
+      : this(
+          uid: "",
+          userName: "John123",
+          firstName: "John",
+          lastName: "Doe",
+          profileImg: "",
+          backCoverImg: "",
+          dob: DateTime.now(),
+          emailId: "",
+          contactNo: "",
+          address: Address(
+            city: "",
+            country: '',
+            location: const GeoPoint(0, 0),
+            state: '',
+            zipCode: 123235,
+          ),
+          favPetList: [],
+          petsForAdoption: [],
+          petsAdopted: [],
+        );
+  //      {
+  //   return User(
+  //     uid: "",
+  //     userName: "John123",
+  //     firstName: "John",
+  //     lastName: "Doe",
+  //     profileImg: "",
+  //     backCoverImg: "",
+  //     dob: DateTime.now(),
+  //     emailId: "",
+  //     contactNo: "",
+  //     address: Address(
+  //       city: "",
+  //       country: '',
+  //       location: const GeoPoint(0, 0),
+  //       state: '',
+  //       zipCode: 123235,
+  //     ),
+  //     favPetList: [],
+  //     petsForAdoption: [],
+  //     petsAdopted: [],
+  //   );
+  // }
+
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'uid': uid,

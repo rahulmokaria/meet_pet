@@ -68,6 +68,31 @@ class Pet {
     );
   }
 
+  Pet.dummy()
+      : this(
+          age: 2.0,
+          breed: 'Labrador',
+          desc:
+              "Everything is so expensive.Going to a bar is a fun thing to do.Here's my big brother. Doesn't he look good?",
+          gender: 'M',
+          imgs: [
+            "assets/images/dumbdog.jpg",
+          ],
+          name: 'Duggu',
+          petId: '',
+          type: 'dog',
+          oldOwner: 'Rahul Mokara',
+          oldOwnerUID: '',
+          datePosted: DateTime.now(),
+          address: Address(
+            location: GeoPoint(0, 0),
+            city: "Porbandar",
+            state: "Gujarat",
+            country: "India",
+            zipCode: 360575,
+          ),
+        );
+
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'age': age,

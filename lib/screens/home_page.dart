@@ -1,3 +1,4 @@
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -7,9 +8,11 @@ import 'package:flutter_zoom_drawer/config.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:meet_pet/models/address.dart';
-import 'package:meet_pet/screens/chat_screen.dart';
+import 'package:meet_pet/resources/firestore_methods.dart';
+import 'package:meet_pet/screens/chat/chat_screen.dart';
 import 'package:meet_pet/screens/favorite_pets.dart';
 import 'package:provider/provider.dart';
+import 'package:location/location.dart';
 
 import '../models/pet.dart';
 import '../models/user.dart' as model;
@@ -17,9 +20,11 @@ import '../providers/user_provider.dart';
 import '../resources/auth_methods.dart';
 import '../utils/colors.dart';
 import '../widgets/menu_screen.dart';
+import '../widgets/show_snackbar.dart';
 import 'add_pet.dart';
 import 'adopt_pet_screen.dart';
-import 'all_chats.dart';
+import 'chat/all_chats.dart';
+import 'notification_page.dart';
 import 'user_profile.dart';
 
 int menuItemSelected = 1;
@@ -35,11 +40,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _menuItemSelected = 1;
-  late Position currLocation;
+  GeoPoint currLocation = GeoPoint(0, 0);
   bool _isLoading = true;
-  var userData = {};
-  var petListdb = [];
-  List<Pet> petList = [];
+  // var userData = {};
+  // var petListdb = [];
+  late model.User cUser;
+  // List<Pet> petList = [];
   @override
   void initState() {
     super.initState();
@@ -47,84 +53,92 @@ class _HomePageState extends State<HomePage> {
   }
 
   addData() async {
-    // UserProvider _userProvider =
-    //     Provider.of<UserProvider>(context, listen: false);
-    // await _userProvider.refreshUser();
-    getData();
-  }
-
-  getData() async {
     setState(() {
       _isLoading = true;
     });
     try {
-      var userSnap = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get();
-
-      // get post lENGTH
-      var petForAdoptionSnap = await FirebaseFirestore.instance
-          .collection('petsforAdoption')
-          .where('oldOwnerUID',
-              isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-          .get();
-
-      userData = userSnap.data()!;
-
-      QuerySnapshot<Map<String, dynamic>> petSnap =
-          await FirebaseFirestore.instance.collection('petsforAdoption').get();
-      petListdb = petSnap.docs;
-
-      for (var pet in petListdb) {
-        var curPet = Pet(
-          age: pet["age"],
-          breed: pet["breed"],
-          desc: pet["desc"],
-          gender: pet["gender"],
-          imgs: pet["imgs"], // problem
-          name: pet["name"],
-          oldOwner: pet["oldOwner"],
-          oldOwnerUID: pet["oldOwnerUID"],
-          petId: pet["petId"],
-          type: pet["type"],
-          datePosted: pet["datePosted"].toDate(), //problem
-          address: Address(
-            location: pet["address"]['location'],
-            city: pet["address"]["city"],
-            state: pet["address"]["state"],
-            country: pet["address"]["country"],
-            zipCode: pet["address"]["zipCode"],
-          ),
-        );
-
-        petList.add(curPet);
-      }
+      cUser = await FireStoreMethods().getUserDetails();
+      // print(cUser);
     } catch (e) {
-      // showSnackBar(
-      //   context,
-      //   e.toString(),
-      // );
+      //  ScaffoldMessenger.of(context).showSnackBar(showCustomSnackBar(
+      //   ctype: ContentType.failure,
+      //   message: e.toString() + "Please contact admin to resolve",
+      // ));
     }
     setState(() {
       _isLoading = false;
     });
-    // print(userData);
   }
 
-  findDistance(double startLatitude, double startLongitude, double endLatitude,
-      double endLongitude) {
-    double dis = Geolocator.distanceBetween(
-      startLatitude,
-      startLongitude,
-      endLatitude,
-      endLongitude,
-    );
-    return dis;
-  }
+  // getData() async {
+  //   setState(() {
+  //     _isLoading = true;
+  //   });
+  //   try {
+  //     var userSnap = await FirebaseFirestore.instance
+  //         .collection('users')
+  //         .doc(FirebaseAuth.instance.currentUser!.uid)
+  //         .get();
+  //     // get post lENGTH
+  //     var petForAdoptionSnap = await FirebaseFirestore.instance
+  //         .collection('petsForAdoption')
+  //         .where('oldOwnerUID',
+  //             isNotEqualTo: FirebaseAuth.instance.currentUser!.uid)
+  //         .get();
+
+  //     userData = userSnap.data()!;
+
+  //     QuerySnapshot<Map<String, dynamic>> petSnap =
+  //         await FirebaseFirestore.instance.collection('petsforAdoption').get();
+  //     petListdb = petSnap.docs;
+  //     print("${petListdb.length} fox");
+  //     for (var pet in petListdb) {
+  //       var curPet = Pet(
+  //         age: pet["age"],
+  //         breed: pet["breed"],
+  //         desc: pet["desc"],
+  //         gender: pet["gender"],
+  //         imgs: pet["imgs"], // problem
+  //         name: pet["name"],
+  //         oldOwner: pet["oldOwner"],
+  //         oldOwnerUID: pet["oldOwnerUID"],
+  //         petId: pet["petId"],
+  //         type: pet["type"],
+  //         datePosted: pet["datePosted"].toDate(), //problem
+  //         address: Address(
+  //           location: pet["address"]['location'],
+  //           city: pet["address"]["city"],
+  //           state: pet["address"]["state"],
+  //           country: pet["address"]["country"],
+  //           zipCode: pet["address"]["zipCode"],
+  //         ),
+  //       );
+
+  //       petList.add(curPet);
+  //     }
+  //     print("${petListdb.length} fox");
+  //   } catch (e) {
+  //     // ScaffoldMessenger.of(context).showSnackBar(
+  //     //   showCustomSnackBar(
+  //     //     ctype: ContentType.failure,
+  //     //     message: e.toString(),
+  //     //   ),
+  //     // );
+  //   }
+  //   setState(() {
+  //     _isLoading = false;
+  //   });
+  //   // print(userData);
+  // }
 
   getLocation() async {
-    currLocation = await Geolocator.getCurrentPosition();
+    Location location = new Location();
+
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+    setState(() async {
+      currLocation = (await Geolocator.getCurrentPosition()) as GeoPoint;
+    });
   }
 
   //  getLocation() async {
@@ -132,11 +146,10 @@ class _HomePageState extends State<HomePage> {
   //   return curr;
   // }
 
-  Widget currentScreen(model.User cUser, List<Pet> petList) {
+  Widget currentScreen(model.User cUser) {
     if (menuItemSelected == 1) {
       return AdoptPetScreen(
         cUser: cUser,
-        petList: petList,
       );
     } else if (menuItemSelected == 2) {
       return AddPet(
@@ -154,12 +167,12 @@ class _HomePageState extends State<HomePage> {
         listType: 'Favorite Pets',
       );
     } else if (menuItemSelected == 4) {
+      return NotificationPage(
+          cUser: cUser,
+          );
+    } else if (menuItemSelected == 5) {
       return AllChats(
         cUser: cUser,
-      );
-    } else if (menuItemSelected == 5) {
-      return ChatScreen(
-        // cUser: cUser,
       );
     } else if (menuItemSelected == 6) {
       return UserProfile(
@@ -168,52 +181,51 @@ class _HomePageState extends State<HomePage> {
     }
     return AdoptPetScreen(
       cUser: cUser,
-      petList: petList,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    getLocation();
-    model.User cUser = model.User(
-      address: Address(
-        location: userData['address']['location'],
-        city: userData['address']['city'], //works
-        country: userData['address']['country'], //works
-        state: userData['address']['state'], //works
-        zipCode: userData['address']['zipCode'],
-      ),
-      contactNo: userData['contactNo'],
-      userName: userData['userName'],
-      uid: userData['uid'],
-      firstName: userData['firstName'],
-      lastName: userData['lastName'],
+    // getLocation();
+    // model.User cUser = model.User(
+    //   address: Address(
+    //     location: userData['address']['location'],
+    //     city: userData['address']['city'], //works
+    //     country: userData['address']['country'], //works
+    //     state: userData['address']['state'], //works
+    //     zipCode: userData['address']['zipCode'],
+    //   ),
+    //   contactNo: userData['contactNo'],
+    //   userName: userData['userName'],
+    //   uid: userData['uid'],
+    //   firstName: userData['firstName'],
+    //   lastName: userData['lastName'],
 
-      dob: userData['dob'].toDate(),
-      emailId: userData['emailId'],
-      profileImg: userData['profileImg'],
-      backCoverImg: userData['backCoverImg'],
-      favPetList: userData['favPetList'],
-      // petsForAdoption: userData['petsForAdoption'],
-      petsForAdoption: [],
-      petsAdopted: userData['petsAdopted'],
-      // petsAdopted: [],
-    );
+    //   dob: userData['dob'].toDate(),
+    //   emailId: userData['emailId'],
+    //   profileImg: userData['profileImg'],
+    //   backCoverImg: userData['backCoverImg'],
+    //   favPetList: userData['favPetList'],
+    //   // petsForAdoption: userData['petsForAdoption'],
+    //   petsForAdoption: [],
+    //   petsAdopted: userData['petsAdopted'],
+    //   // petsAdopted: [],
+    // );
 
-    for (var pet in petList) {
-      pet.distance = findDistance(currLocation.latitude, currLocation.longitude,
-          pet.address.location.latitude, pet.address.location.longitude);
-      // pet.distance = findDistance(
-      //     cUser.address.location.latitude,
-      //     cUser.address.location.longitude,
-      //     pet.address.location.latitude,
-      //     pet.address.location.longitude);
-    }
-    petList.sort((p1, p2) => p1.distance.compareTo(p2.distance));
+    // for (var pet in petList) {
+    //   pet.distance = findDistance(currLocation.latitude, currLocation.longitude,
+    //       pet.address.location.latitude, pet.address.location.longitude);
+    //   // pet.distance = findDistance(
+    //   //     cUser.address.location.latitude,
+    //   //     cUser.address.location.longitude,
+    //   //     pet.address.location.latitude,
+    //   //     pet.address.location.longitude);
+    // }
+    // petList.sort((p1, p2) => p1.distance.compareTo(p2.distance));
 
-    setState(() {
-      _isLoading = false;
-    });
+    // setState(() {
+    //   _isLoading = false;
+    // });
     return _isLoading
         ? const Center(
             child: CircularProgressIndicator(
@@ -222,7 +234,7 @@ class _HomePageState extends State<HomePage> {
           )
         : ZoomDrawer(
             // mainScreen: const Body(),
-            mainScreen: currentScreen(cUser, petList),
+            mainScreen: currentScreen(cUser),
             menuScreen: MenuScreen(
               cUser: cUser,
               setIndex: (index) {

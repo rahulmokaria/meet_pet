@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -6,11 +7,13 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:meet_pet/resources/firestore_methods.dart';
 
 import 'package:meet_pet/utils/colors.dart';
 
 import '../models/pet.dart';
 import '../models/user.dart';
+import '../widgets/show_snackbar.dart';
 
 class PetDescription extends StatefulWidget {
   Pet cpet;
@@ -29,6 +32,8 @@ class _PetDescriptionState extends State<PetDescription> {
   int _current = 0;
   bool isFavPet = false;
   final CarouselController _controller = CarouselController();
+  bool isLoadingFav = false;
+  bool isLoadingAdopt = false;
 
   @override
   void initState() {
@@ -36,8 +41,128 @@ class _PetDescriptionState extends State<PetDescription> {
     isFavPet = (widget.cuser.favPetList.contains(widget.cpet.petId));
   }
 
+  confirmDialog(width) {
+    print("Kuchbhi");
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Container(
+        padding: EdgeInsets.all(width * 4),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Confirm Adoption',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: width * 5,
+              ),
+            ),
+            SizedBox(height: width * 3),
+            Text(
+              'Are you sure you want to send adoption request?',
+              style: TextStyle(fontSize: width * 4),
+            ),
+            SizedBox(height: width * 3),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                InkWell(
+                  onTap: () {
+                    // Perform action when Cancel is tapped
+                    Navigator.of(context).pop(false);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: width * 4,
+                      vertical: width * 2,
+                    ),
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: width * 4,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: width * 2),
+                InkWell(
+                  onTap: () {
+                    // Perform action when Confirm is tapped
+
+                    sendRequest();
+
+                    Navigator.of(context).pop(true);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: width * 4,
+                      vertical: width * 2,
+                    ),
+                    child: Text(
+                      'Confirm',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: width * 4,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  sendRequest() async {
+    setState(() {
+      isLoadingAdopt = true;
+    });
+    try {
+      String res = await FireStoreMethods()
+          .sendAdoptionRequest(widget.cpet, widget.cuser);
+      if (res == 'success') {
+        ScaffoldMessenger.of(context).showSnackBar(showCustomSnackBar(
+            message:
+                "Adoption request sent successfully, wait till the owner responds. Meanwhile, you can also contact the owner for better understanding.",
+            ctype: ContentType.success));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            showCustomSnackBar(message: res, ctype: ContentType.failure));
+      }
+    } catch (e) {}
+    setState(() {
+      isLoadingAdopt = false;
+    });
+  }
+
+  changeFavList() async {
+    setState(() {
+      isLoadingFav = true;
+    });
+    try {
+      String res = await FireStoreMethods()
+          .changeFavList(widget.cuser, widget.cpet.petId, isFavPet);
+      if (res == 'success') {
+        isFavPet ^= true;
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            showCustomSnackBar(message: res, ctype: ContentType.failure));
+      }
+    } catch (e) {}
+    setState(() {
+      isLoadingFav = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    var _width = MediaQuery.of(context).size.width / 100;
+    var _height = MediaQuery.of(context).size.height / 100;
     // print(widget.cpet.desc);
     return Scaffold(
       backgroundColor: secondary,
@@ -50,7 +175,7 @@ class _PetDescriptionState extends State<PetDescription> {
                   children: [
                     CarouselSlider(
                       options: CarouselOptions(
-                          height: MediaQuery.of(context).size.width * 1.1,
+                          height: _width * 110,
                           // aspectRatio: 1,
                           enableInfiniteScroll: false,
                           enlargeCenterPage: true,
@@ -68,9 +193,8 @@ class _PetDescriptionState extends State<PetDescription> {
                                     child: Image.network(
                                   item,
                                   fit: BoxFit.cover,
-                                  height:
-                                      MediaQuery.of(context).size.width * 1.1,
-                                  width: MediaQuery.of(context).size.width,
+                                  height: _width * 110,
+                                  width: _width * 100,
                                 )),
                               ))
                           .toList(),
@@ -138,7 +262,7 @@ class _PetDescriptionState extends State<PetDescription> {
                                     widget.cpet.gender == "M"
                                         ? Icons.male
                                         : Icons.female,
-                                    color: Colors.black.withOpacity(.40),
+                                    color: black,
                                   ),
                                 ],
                               ),
@@ -200,7 +324,8 @@ class _PetDescriptionState extends State<PetDescription> {
                       children: [
                         //image
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(25),
+                          borderRadius: BorderRadius.circular(
+                              MediaQuery.of(context).size.width * 0.07),
                           child: //Image.network(
                               // 'assets/images/owl.jpg',
                               // height: 50,
@@ -209,8 +334,8 @@ class _PetDescriptionState extends State<PetDescription> {
                               // ),
                               Image.asset(
                             'assets/images/owl.jpg',
-                            height: 50,
-                            width: 50,
+                            height: _width * 14,
+                            width: _width * 14,
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -266,11 +391,11 @@ class _PetDescriptionState extends State<PetDescription> {
                 ),
                 Container(
                   padding: const EdgeInsets.all(20),
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     color: white,
                     borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
+                      topLeft: Radius.circular(_width * 8),
+                      topRight: Radius.circular(_width * 8),
                     ),
                   ),
                   child: Row(
@@ -278,54 +403,55 @@ class _PetDescriptionState extends State<PetDescription> {
                       children: [
                         InkWell(
                           onTap: () {
-                            if (isFavPet) {
-                              setState(() {
-                                isFavPet = false;
-                              });
-                              widget.cuser.favPetList.remove(widget.cpet.petId);
-                              FirebaseFirestore.instance
-                                  .collection("users")
-                                  .doc(widget.cuser.uid)
-                                  .set(widget.cuser.toMap());
-                            } else {
-                              setState(() {
-                                isFavPet = true;
-                              });
-                              widget.cuser.favPetList.add(widget.cpet.petId);
-                              FirebaseFirestore.instance
-                                  .collection("users")
-                                  .doc(widget.cuser.uid)
-                                  .set(widget.cuser.toMap());
-                            }
+                            changeFavList();
                           },
-                          child: Container(
-                            padding: const EdgeInsets.all(10),
-                            width: MediaQuery.of(context).size.width * 0.2,
-                            decoration: BoxDecoration(
-                                color: primary,
-                                borderRadius: BorderRadius.circular(18)),
-                            child: Icon(
-                              isFavPet
-                                  ? Icons.favorite
-                                  : Icons.favorite_border_outlined,
-                              color: white,
-                            ),
-                          ),
+                          child: (isLoadingFav)
+                              ? const Center(
+                                  child: CircularProgressIndicator(
+                                    color: white,
+                                  ),
+                                )
+                              : Container(
+                                  padding: const EdgeInsets.all(10),
+                                  width: _width * 20,
+                                  decoration: BoxDecoration(
+                                      color: primary,
+                                      borderRadius: BorderRadius.circular(18)),
+                                  child: Icon(
+                                    isFavPet
+                                        ? Icons.favorite
+                                        : Icons.favorite_border_outlined,
+                                    color: white,
+                                  ),
+                                ),
                         ),
                         InkWell(
-                          child: Container(
-                            padding: const EdgeInsets.all(10),
-                            width: MediaQuery.of(context).size.width * 0.65,
-                            decoration: BoxDecoration(
-                                color: primary,
-                                borderRadius: BorderRadius.circular(18)),
-                            child: const Center(
-                                child: Text(
-                              "Adoption",
-                              textScaleFactor: 1.3,
-                              style: TextStyle(color: white),
-                            )),
-                          ),
+                          onTap: () {
+                            showDialog(
+                                context: context,
+                                builder: (_) => confirmDialog(_width)
+                                // )
+                                );
+                          },
+                          child: (isLoadingAdopt)
+                              ? const Center(
+                                  child: CircularProgressIndicator(
+                                    color: white,
+                                  ),
+                                )
+                              : Container(
+                                  padding: const EdgeInsets.all(10),
+                                  width: _width * 65,
+                                  decoration: BoxDecoration(
+                                      color: primary,
+                                      borderRadius: BorderRadius.circular(18)),
+                                  child: const Center(
+                                      child: Text(
+                                    "Adopt",
+                                    textScaleFactor: 1.3,
+                                    style: TextStyle(color: white),
+                                  )),
+                                ),
                         )
                       ]),
                 ),

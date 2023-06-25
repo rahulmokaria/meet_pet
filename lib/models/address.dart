@@ -17,8 +17,7 @@ class Address {
   });
 
   Address copyWith({
-    String? latitude,
-    String? longitude,
+    // GeoPoint? location,
     String? city,
     String? state,
     String? country,

@@ -1,68 +1,24 @@
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 
-showCustomSnackBar(String message, String e, Color msgColor, IconData msgIcon) {
+showCustomSnackBar({required String message, required ContentType ctype}) {
   return SnackBar(
+    /// need to set following properties for best effect of awesome_snackbar_content
     elevation: 0,
+    // behavior: SnackBarBehavior.floating,
     backgroundColor: Colors.transparent,
-    behavior: SnackBarBehavior.floating,
-    padding: const EdgeInsets.all(10),
-    content: Stack(
-      children: [
-        Container(
-          height: 120,
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: msgColor,
-          ),
-          child: Row(
-            children: [
-              const SizedBox(
-                width: 48,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      message,
-                      style: const TextStyle(fontSize: 24),
-                    ),
-                    Text(
-                      e,
-                      style: const TextStyle(
-                        // color: white,
-                        fontSize: 16,
-                      ),
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        Positioned(
-            bottom: 35,
-            left: 10,
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(20),
-              ),
-              child: Stack(
-                children: [Icon(msgIcon, size: 40)],
-              ),
-            )),
-        Positioned(
-          top: -20,
-          left: 0,
-          child: Stack(
-            alignment: Alignment.center,
-            children: const [],
-          ),
-        ),
-      ],
+    content: AwesomeSnackbarContent(
+      title: (ctype == ContentType.failure)
+          ? 'Oh Snap!'
+          : (ctype == ContentType.help)
+              ? 'Hello There!'
+              : (ctype == ContentType.success)
+                  ? 'Successful!'
+                  : 'Warning!',
+      message: message,
+
+      /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
+      contentType: ctype,
     ),
   );
 }

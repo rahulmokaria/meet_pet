@@ -6,6 +6,8 @@ import 'package:meet_pet/models/chatroom.dart';
 import 'package:meet_pet/models/user.dart';
 import 'package:meet_pet/resources/chat_methods.dart';
 
+import '../../utils/colors.dart';
+
 class AddFriends extends StatelessWidget {
   User cUser;
 
@@ -27,9 +29,9 @@ class AddFriends extends StatelessWidget {
                   return ListTile(
                     title: Text("${user['firstName']}"),
                     trailing: IconButton(
-                      icon: const Icon(
+                      icon: Icon(
                         FontAwesomeIcons.plus,
-                        color: Colors.black,
+                        color: black,
                       ),
                       onPressed: () {
                         if (x) {

@@ -44,62 +44,10 @@ class _UserProfileState extends State<UserProfile> {
       _isLoading = true;
     });
     try {
-      for (var p in widget.cUser.petsForAdoption) {
-        DocumentSnapshot<Map<String, dynamic>> petSnap =
-            await FirebaseFirestore.instance.collection('pets').doc(p).get();
-
-        var pet = petSnap.data()!;
-        var curPet = Pet(
-          age: pet["age"],
-          breed: pet["breed"],
-          desc: pet["desc"],
-          gender: pet["gender"],
-          imgs: pet["imgs"], // problem
-          name: pet["name"],
-          oldOwner: pet["oldOwner"],
-          oldOwnerUID: pet["oldOwnerUID"],
-          petId: pet["petId"],
-          type: pet["type"],
-          datePosted: pet["datePosted"].toDate(), //problem
-          address: Address(
-            location: pet['address']['location'],
-            city: pet["address"]["city"],
-            state: pet["address"]["state"],
-            country: pet["address"]["country"],
-            zipCode: pet["address"]["zipCode"],
-          ),
-        );
-
-        petsForAdoptionList.add(curPet);
-      }
-      for (var p in widget.cUser.petsAdopted) {
-        DocumentSnapshot<Map<String, dynamic>> petSnap =
-            await FirebaseFirestore.instance.collection('pets').doc(p).get();
-
-        var pet = petSnap.data()!;
-        var curPet = Pet(
-          age: pet["age"],
-          breed: pet["breed"],
-          desc: pet["desc"],
-          gender: pet["gender"],
-          imgs: pet["imgs"], // problem
-          name: pet["name"],
-          oldOwner: pet["oldOwner"],
-          oldOwnerUID: pet["oldOwnerUID"],
-          petId: pet["petId"],
-          type: pet["type"],
-          datePosted: pet["datePosted"].toDate(), //problem
-          address: Address(
-            location: pet["address"]['location'],
-            city: pet["address"]["city"],
-            state: pet["address"]["state"],
-            country: pet["address"]["country"],
-            zipCode: pet["address"]["zipCode"],
-          ),
-        );
-
-        petsAdoptedList.add(curPet);
-      }
+      petsForAdoptionList = await FireStoreMethods()
+          .getCustomPetList("petsForAdoption", widget.cUser.petsForAdoption);
+      petsAdoptedList = await FireStoreMethods()
+          .getCustomPetList("petsAdopted", widget.cUser.petsAdopted);
     } catch (e) {
       // showSnackBar(
       //   context,
@@ -131,8 +79,7 @@ class _UserProfileState extends State<UserProfile> {
   Widget build(BuildContext context) {
     double _width = MediaQuery.of(context).size.width * 0.01;
     double _height = MediaQuery.of(context).size.height * 0.01;
-    print(_width);
-    // model.User cUser = model.User.fromMap(userData);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: white,
@@ -143,6 +90,7 @@ class _UserProfileState extends State<UserProfile> {
           ),
           textAlign: TextAlign.center,
         ),
+        // elevation: 0.0,
         leading: IconButton(
           icon: Icon(
             FontAwesomeIcons.barsStaggered,
@@ -152,6 +100,7 @@ class _UserProfileState extends State<UserProfile> {
             zoomDrawerController.toggle!();
           },
         ),
+        // shadowColor: secondaryLight,
         shadowColor: Colors.transparent,
       ),
       body: SingleChildScrollView(
@@ -337,43 +286,45 @@ class _UserProfileState extends State<UserProfile> {
                   borderRadius: BorderRadius.circular(_width * 7.5),
                 ),
                 child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Flexible(child: Container(), flex: 1),
-                      Text(
-                        "Pets added for adoption",
-                        textScaleFactor: 1.5,
-                        style: TextStyle(
-                          color: black,
+                  child: InkWell(
+                    onTap: () {
+                      print("All pets put for adoption");
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => FavoritePetScreen(
+                              cUser: widget.cUser,
+                              listType: "Pets For Adoption"),
                         ),
-                      ),
-                      Flexible(child: Container(), flex: 2),
-                      InkWell(
-                        onTap: () {
-                          print("All pets put for adoption");
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => FavoritePetScreen(
-                                  cUser: widget.cUser,
-                                  listType: "Pets For Adoption"),
-                            ),
-                          );
-                        },
-                        child: Icon(
-                          FontAwesomeIcons.chevronDown,
-                          color: black,
+                      );
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Flexible(child: Container(), flex: 1),
+                        Text(
+                          "Pets added for adoption ",
+                          textScaleFactor: 1.5,
+                          style: TextStyle(
+                            color: black,
+                          ),
                         ),
-                      ),
-                      Flexible(child: Container(), flex: 1),
-                    ],
+                        Flexible(child: Container(), flex: 2),
+                        InkWell(
+                          child: Icon(
+                            FontAwesomeIcons.chevronDown,
+                            color: black,
+                          ),
+                        ),
+                        Flexible(child: Container(), flex: 1),
+                      ],
+                    ),
                   ),
                 ),
               ),
-              (petsForAdoptionList.isEmpty)
+              (petsForAdoptionList.isEmpty || petsForAdoptionList.isEmpty)
                   ? SizedBox(
-                      height: _width * 0.8,
-                      width: _width,
+                      width: _width * 100,
+                      height: _width * 20,
                       child: Center(
                         child: Text(
                           "No Pets put for adoption",
@@ -440,7 +391,7 @@ class _UserProfileState extends State<UserProfile> {
                     children: [
                       Flexible(child: Container(), flex: 1),
                       Text(
-                        "Pets adopted",
+                        "Pets adopted ",
                         textScaleFactor: 1.5,
                         style: TextStyle(
                           color: black,
@@ -468,13 +419,13 @@ class _UserProfileState extends State<UserProfile> {
                   ),
                 ),
               ),
-              (petsAdoptedList.isEmpty)
+              (petsAdoptedList.isEmpty )
                   ? SizedBox(
-                      width: _width,
-                      height: _width * 0.8,
+                      width: _width * 100,
+                      height: _width * 20,
                       child: Center(
                         child: Text(
-                          "No Pets adopted",
+                          "No Pets adopted ",
                           style: TextStyle(
                             color: black,
                           ),

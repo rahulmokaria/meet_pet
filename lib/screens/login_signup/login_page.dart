@@ -1,15 +1,17 @@
+import 'dart:io';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:meet_pet/screens/forgot_password.dart';
+import 'package:meet_pet/screens/login_signup/forgot_password.dart';
 import 'package:meet_pet/widgets/show_snackbar.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../resources/auth_methods.dart';
-import '../utils/colors.dart';
-import '../widgets/text_field_ui.dart';
-import 'home_page.dart';
+import '../../resources/auth_methods.dart';
+import '../../utils/colors.dart';
+import '../../widgets/text_field_ui.dart';
+import '../home_page.dart';
 import 'sign_up_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -45,8 +47,8 @@ class _LoginPageState extends State<LoginPage> {
     if (res == 'success' || res == 'Success') {
       gotoHome();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(showCustomSnackBar(
-          "Oh Snap!", res, pink, CupertinoIcons.exclamationmark_circle));
+      ScaffoldMessenger.of(context).showSnackBar(
+          showCustomSnackBar(ctype: ContentType.failure, message: res));
     }
     setState(() {
       _isLoading = false;
@@ -62,8 +64,8 @@ class _LoginPageState extends State<LoginPage> {
     if (res == 'success') {
       gotoHome();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(showCustomSnackBar(
-          "Oh Snap!", res, pink, CupertinoIcons.exclamationmark_circle));
+      ScaffoldMessenger.of(context).showSnackBar(
+          showCustomSnackBar(message: res, ctype: ContentType.failure));
     }
     // setState(() {
     //   _isLoading = false;
@@ -101,16 +103,18 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    var _width = MediaQuery.of(context).size.width / 100;
+    var _height = MediaQuery.of(context).size.height / 100;
     return Scaffold(
       backgroundColor: secondary,
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: MediaQuery.of(context).size.width * 0.3),
+            SizedBox(height: _width * 30),
             Container(
               alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.only(
-                left: 35,
+              padding: EdgeInsets.only(
+                left: _width * 10,
               ),
               child: Text(
                 "Login",
@@ -120,13 +124,13 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            const SizedBox(
-              height: 50,
+            SizedBox(
+              height: _width * 14,
             ),
             Container(
-              padding: const EdgeInsets.only(
-                right: 35,
-                left: 35,
+              padding: EdgeInsets.only(
+                right: _width * 10,
+                left: _width * 10,
               ),
               child: Column(
                 children: [
@@ -165,7 +169,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width,
-                    height: 50,
+                    height: _width * 14,
                     margin: const EdgeInsets.fromLTRB(0, 10, 0, 20),
                     decoration:
                         BoxDecoration(borderRadius: BorderRadius.circular(90)),
@@ -184,7 +188,8 @@ class _LoginPageState extends State<LoginPage> {
                         shape:
                             MaterialStateProperty.all<RoundedRectangleBorder>(
                                 RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(100))),
+                                    borderRadius:
+                                        BorderRadius.circular(_width * 28))),
                       ),
                       child: _isLoading
                           ? const Center(
@@ -235,7 +240,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width,
-                    height: 50,
+                    height: _width * 14,
                     margin: const EdgeInsets.fromLTRB(0, 10, 0, 20),
                     decoration:
                         BoxDecoration(borderRadius: BorderRadius.circular(90)),
@@ -257,7 +262,8 @@ class _LoginPageState extends State<LoginPage> {
                         shape:
                             MaterialStateProperty.all<RoundedRectangleBorder>(
                                 RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30))),
+                                    borderRadius:
+                                        BorderRadius.circular(_width * 8))),
                       ),
                       child: Stack(
                         children: [
@@ -301,7 +307,7 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
             ),
-            SizedBox(height: MediaQuery.of(context).size.width * 0.1),
+            SizedBox(height: _width * 10),
           ],
         ),
       ),

@@ -9,10 +9,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:meet_pet/screens/home_page.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../resources/auth_methods.dart';
-import '../utils/colors.dart';
-import '../widgets/show_snackbar.dart';
-import '../widgets/text_field_ui.dart';
+import '../../resources/auth_methods.dart';
+import '../../utils/colors.dart';
+import '../../widgets/show_snackbar.dart';
+import '../../widgets/text_field_ui.dart';
 import 'login_page.dart';
 
 class SignUpPage extends StatefulWidget {

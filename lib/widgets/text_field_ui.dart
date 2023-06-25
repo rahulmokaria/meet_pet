@@ -13,7 +13,7 @@ TextFormField textFieldUi(String text, IconData icon, bool isPasswordType,
     decoration: InputDecoration(
       prefixIcon: Icon(
         icon,
-        color: primary,
+        color: white.withOpacity(0.2),
       ),
       labelText: text,
       labelStyle: TextStyle(color: primary),

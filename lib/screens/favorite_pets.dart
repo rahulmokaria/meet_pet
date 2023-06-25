@@ -6,6 +6,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:meet_pet/resources/firestore_methods.dart';
 
 import '../models/address.dart';
 import '../models/pet.dart';
@@ -32,7 +33,7 @@ class _FavoritePetScreenState extends State<FavoritePetScreen> {
   String category = "All";
   int _selectedCategory = 1;
 
-  Map petListdb = {};
+  // Map petListdb = {};
   List<Pet> petList = [];
   @override
   void initState() {
@@ -46,49 +47,25 @@ class _FavoritePetScreenState extends State<FavoritePetScreen> {
     });
     print("trying");
     try {
-      List<dynamic> petList = (widget.listType == "Favorite Pets")
+      List<dynamic> petIdList = (widget.listType == 'Favorite Pets')
           ? widget.cUser.favPetList
           : (widget.listType == "Pets For Adoption")
               ? widget.cUser.petsForAdoption
               : widget.cUser.petsAdopted;
-      for (var p in petList) {
-        DocumentSnapshot<Map<String, dynamic>> petSnap = await FirebaseFirestore
-            .instance
-            .collection('petsforAdoption')
-            .doc(p)
-            .get();
 
-        var pet = petSnap.data()!;
-        var curPet = Pet(
-          age: pet["age"],
-          breed: pet["breed"],
-          desc: pet["desc"],
-          gender: pet["gender"],
-          imgs: pet["imgs"], // problem
-          name: pet["name"],
-          oldOwner: pet["oldOwner"],
-          oldOwnerUID: pet["oldOwnerUID"],
-          petId: pet["petId"],
-          type: pet["type"],
-          datePosted: pet["datePosted"].toDate(), //problem
-          address: Address(
-            location: pet['address']['location'],
-            city: pet["address"]["city"],
-            state: pet["address"]["state"],
-            country: pet["address"]["country"],
-            zipCode: pet["address"]["zipCode"],
-          ),
-        );
-
-        petList.add(curPet);
-      }
+      String petListType = (widget.listType == 'Favorite Pets' ||
+              widget.listType == "Pets For Adoption")
+          ? "petsForAdoption"
+          : "petsAdopted";
+      petList =
+          await FireStoreMethods().getCustomPetList(petListType, petIdList); 
     } catch (e) {
       // showSnackBar(
       //   context,
       //   e.toString(),
       // );
     }
-    print("completed");
+    print(petList.length);
     setState(() {
       _isLoading = false;
     });
@@ -143,7 +120,7 @@ class _FavoritePetScreenState extends State<FavoritePetScreen> {
 
     for (var pet in petList) {
       if (category == 'All' ||
-          category.toLowerCase() == (pet.type + "s").toLowerCase()) {
+          category.toLowerCase() == ("${pet.type}s").toLowerCase()) {
         len++;
       }
     }
@@ -165,8 +142,13 @@ class _FavoritePetScreenState extends State<FavoritePetScreen> {
         children: [
           for (var pet in petList) ...[
             if (category == 'All' ||
-                category.toLowerCase() == (pet.type + "s").toLowerCase())
-              landscapePetCard(pet, widget.cUser, context),
+                category.toLowerCase() == ("${pet.type}s").toLowerCase())
+              landscapePetCard(
+                cUser: widget.cUser,
+                context: context,
+                listType: false,
+                pet: pet,
+              ),
           ]
         ],
       );
@@ -194,11 +176,15 @@ class _FavoritePetScreenState extends State<FavoritePetScreen> {
         // elevation: 0.0,
         leading: IconButton(
           icon: Icon(
-            FontAwesomeIcons.barsStaggered,
+            (widget.listType == "Favorite Pets")
+                ? FontAwesomeIcons.barsStaggered
+                : FontAwesomeIcons.arrowLeft,
             color: primary,
           ),
           onPressed: () {
-            zoomDrawerController.toggle!();
+            (widget.listType == "Favorite Pets")
+                ? zoomDrawerController.toggle!()
+                : Navigator.pop(context);
           },
         ),
         // shadowColor: secondaryLight,
